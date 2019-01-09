@@ -32,3 +32,4 @@ class Calc:
     print(DelP)
     print('F')
     print(F)
+    Print('fuck you')
