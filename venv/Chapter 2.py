@@ -12,7 +12,7 @@ def setup():
 
 def loop():
     while True:
-        if GPIO.input(buttonpin)==GPIO.LOW
+        if GPIO.input(buttonpin)==GPIO.LOW:
             GPIO.output(ledpin, GPIO.HIGH)
             print ('...led on')
         else:
