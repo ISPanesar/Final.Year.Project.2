@@ -1,28 +1,28 @@
 import RPi.GPIO as GPIO
 import time
 
-ledpin = 17
-buttonpin = 18
+ledPin = 17
+buttonPin = 18
 
 
 def setup():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(ledpin, GPIO.OUT)
-    GPIO.setup(buttonpin, GPIO.IN)
+    GPIO.setup(ledPin, GPIO.OUT)
+    GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def loop():
     while True:
-        if GPIO.input(buttonpin)==GPIO.LOW:
-            GPIO.output(ledpin, GPIO.HIGH)
+        if GPIO.input(buttonPin) == GPIO.LOW:
+            GPIO.output(ledPin, GPIO.HIGH)
             print ('led on...')
         else:
-            GPIO.output(ledpin, GPIO.LOW)
+            GPIO.output(ledPin, GPIO.LOW)
             print ('led off...')
 
 
 def destroy():
-    GPIO.output(ledpin, GPIO.LOW)
+    GPIO.output(ledPin, GPIO.LOW)
     GPIO.cleanup()
 
 
