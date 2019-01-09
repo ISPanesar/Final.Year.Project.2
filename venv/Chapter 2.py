@@ -8,7 +8,7 @@ buttonpin = 18
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(ledpin, GPIO.OUT)
-    GPIO.setup(buttonpin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(buttonpin, GPIO.IN)
 
 
 def loop():
