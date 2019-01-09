@@ -21,7 +21,7 @@ def destroy():
     GPIO.output(ledpin, GPIO.LOW)
     GPIO.cleanup()
 
-if__name__=='__main__':
+if __name__ == '__main__':
     setup()
     try:
         loop()
