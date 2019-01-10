@@ -18,7 +18,10 @@ def loop():
             GPIO.output(pin, GPIO.LOW)
             time.sleep(0.1)
             GPIO.output(pin, GPIO.HIGH)
-
+        for pin in ledPins[10:0:-1]:
+            GPIO.output(pin, GPIO.LOW)
+            time.sleep(0.1)
+            GPIO.output(pin, GPIO.HIGH)
 
 def destroy():
     for pin in ledPins:
