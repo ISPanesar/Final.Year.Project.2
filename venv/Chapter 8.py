@@ -31,8 +31,8 @@ def loop():
         value = analogRead(0)
         p.ChangeDutyCycle(value*100/255)
         voltage = value / 255.0 * 3.3
-
-
+        print('ADC Value : %d, Voltage : %.2f' % value, voltage)
+        time.sleep(0.01)
 
 def destroy():
     bus.close()
@@ -40,6 +40,7 @@ def destroy():
 
 if __name__ == '__main__':
     print('Program is starting...')
+    setup()
     try:
         loop()
     except KeyboardInterrupt:
