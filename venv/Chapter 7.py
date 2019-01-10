@@ -12,7 +12,7 @@ def analogRead(chn):
 
 
 def analogWrite(value):
-    bus.write_byte_data(addresss, cmd, value)
+    bus.write_byte_data(address, cmd, value)
 
 
 def loop():
