@@ -31,7 +31,7 @@ def loop():
         b = random.randint(0,100)
         setColour(r,g,b)
         print('r=%d, g=%d, b=%d' %(r, g, b))
-        time sleep(0.3)
+        time.sleep(0.3)
 
 
 def destroy():
