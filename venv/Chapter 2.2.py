@@ -20,7 +20,7 @@ def buttonEvent(channel):
         print ('Turn on LED...')
     else:
         print ('Turn off LED')
-    GPIO.output(ledPin,ledState)
+    GPIO.output(ledPin, ledState)
 
 
 def loop():
