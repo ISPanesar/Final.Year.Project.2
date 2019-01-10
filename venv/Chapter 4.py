@@ -34,6 +34,6 @@ if __name__ == '__main__':
     setup()
     try:
         loop()
-    except KeybosrdInterrupt:
+    except KeyboardInterrupt:
         destroy()
 
