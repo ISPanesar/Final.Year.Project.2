@@ -7,19 +7,19 @@ ledState = False
 
 def setup():
     print('Program is starting...')
-    GPIO.setmode(GPIO.BCM)              #This is the printed circuit numbers
-    GPIO.setup(ledPin, GPIO.OUT)        #Set ledPin mode as an output
-    GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)      #Set buttonPin mode as an input
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(ledPin, GPIO.OUT)
+    GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def buttonEvent(channel):
     global ledState
-    print ('buttonEvent GPIO%d' %channel)
+    print('buttonEvent GPIO%d' % channel)
     ledState = not ledState
     if ledState:
-        print ('Turn on LED...')
+        print('Turn on LED...')
     else:
-        print ('Turn off LED...')
+        print('Turn off LED...')
     GPIO.output(ledPin, ledState)
 
 
@@ -34,11 +34,10 @@ def destroy():
     GPIO.cleanup()
 
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
     setup()
     try:
         loop()
     except KeyboardInterrupt:
         destroy()
-
 
