@@ -11,9 +11,9 @@ def setup():
     for i in pins:
         GPIO.setup(pins[i], GPIO.OUT)
         GPIO.output(pins[i], GPIO.HIGH)
-    p_R = GPIO.PWN(pins['pin_R'], 2000)
-    p_G = GPIO.PWN(pins['pin_G'], 2000)
-    p_B = GPIO.PWN(pins['pin_B'], 2000)
+    p_R = GPIO.PWM(pins['pin_R'], 2000)
+    p_G = GPIO.PWM(pins['pin_G'], 2000)
+    p_B = GPIO.PWM(pins['pin_B'], 2000)
     p_R.start(0)
     p_G.start(0)
     p_B.start(0)
