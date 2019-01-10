@@ -1,7 +1,7 @@
 import smbus
 import time
 
-sddress = 0x48
+address = 0x48
 bus=smbus.SMBus(1)
 cmd=0x40
 
