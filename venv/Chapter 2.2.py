@@ -14,7 +14,7 @@ def setup():
 
 def buttonevent(channel):
     global ledState
-    print('buttonevent GPIO%d' % channel)
+    print('buttonevent GPIO%d' %channel)
     ledState = not ledState
     if ledState:
         print('Turn on LED...')
