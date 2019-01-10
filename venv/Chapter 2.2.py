@@ -12,9 +12,9 @@ def setup():
     GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
-def buttonEvent(channel):
+def buttonevent(channel):
     global ledState
-    print('buttonEvent GPIO%d' % channel)
+    print('buttonevent GPIO%d' % channel)
     ledState = not ledState
     if ledState:
         print('Turn on LED...')
@@ -24,7 +24,7 @@ def buttonEvent(channel):
 
 
 def loop():
-    GPIO.add_event_detect(buttonPin, GPIO.FALLING, callback=buttonEvent, bouncetime=300)
+    GPIO.add_event_detect(buttonPin, GPIO.FALLING, callback=buttonevent, bouncetime=300)
     while True:
         pass
 
