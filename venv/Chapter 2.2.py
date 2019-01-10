@@ -19,12 +19,12 @@ def buttonEvent(channel):
     if ledState:
         print ('Turn on LED...')
     else:
-        print ('Turn off LED')
+        print ('Turn off LED...')
     GPIO.output(ledPin, ledState)
 
 
 def loop():
-    GPIO.add_event_detect(buttonPin, GPIO.FALLING, callback = buttonEvent, bouncetime=300)
+    GPIO.add_event_detect(buttonPin, GPIO.FALLING, callback=buttonEvent, bouncetime=300)
     while True:
         pass
 
