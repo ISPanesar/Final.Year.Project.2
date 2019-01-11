@@ -17,7 +17,7 @@ def pulseIn(pin, level, timeOut):
     while(GPIO.input(pin) == level):
         if (time.time()-t0) > (timeOut*0.000001):
             return 0;
-    pulseTime = (time.time() - t0)*0.000001
+    pulseTime = (time.time() - t0)*1000000
     return pulseTime
 
 
