@@ -21,8 +21,8 @@ def moveOnePeriod(direction, ms):
                 GPIO.output(motorPins[i], ((CCWStep[j] == 1<<i) and GPIO.HIGH or GPIO.LOW))
             else:
                 GPIO.output(motorPins[i], ((CWStep[j] == 1<<i) and GPIO.HIGH or GPIO.LOW))
-            if ms < 3:
-                ms = 3
+            if ms < 2:
+                ms = 2
             time.sleep(ms*0.001)
 
 
@@ -38,7 +38,7 @@ def motorStop():
 
 def loop():
     while True:
-        moveSteps(1, 3, 512)
+        moveSteps(1, 2, 512)
         time.sleep(0.001)
 
 
