@@ -49,7 +49,7 @@ def destroy():
 
 
 if __name__ == '__main__':
-    setyp()
+    setup()
     try:
         loop()
     except KeyboardInterrupt:
