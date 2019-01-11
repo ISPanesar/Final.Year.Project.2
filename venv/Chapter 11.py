@@ -39,7 +39,7 @@ def motorStop():
 def loop():
     while True:
         moveSteps(1, 3, 512)
-        time.sleep(0.5)
+        time.sleep(0.001)
 
 
 def destroy():
