@@ -21,7 +21,7 @@ def pulseIn(Pin, Level, timeOut):
     return pulseTime
 
 
-def getSonar:
+def getSonar():
     GPIO.output(trigPin, GPIO.HIGH)
     time.sleep(0.00001)
     GPIO.output(trigPin, GPIO.LOW)
