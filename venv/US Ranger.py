@@ -8,7 +8,7 @@ MAX_DISTANCE = 220
 timeout = MAX_DISTANCE*60
 
 
-def pulseIn(Pin, Level, timeOut):
+def pulseIn(pin, level, timeOut):
     t0 = time.time()
     while(GPIO.input(pin) != level):
         if (time.time() - t0) > (timeOut*0.000001):
