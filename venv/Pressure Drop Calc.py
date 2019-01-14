@@ -1,4 +1,10 @@
-class Calc:
+my_pressures = ['Pressure']
+my_forces = ['Force']
+my_volumetric_flowrates = ['Volumetric Flowrate']
+fluid_viscosity = ['Fluid Viscosity']
+
+
+def loop():
     from sympy.solvers import solvers
     from sympy import Symbol
     DeltaP = Symbol('DelP')
@@ -12,24 +18,35 @@ class Calc:
     Velocity_Syringe = Symbol('vs')
     Volumetric_Flowrate = Symbol('Q')
     Force = Symbol('F')
-    L = float(input('How long is the tubing in meters?'))
-    Ds = float(input('What is the diameter of the syringe in meters?'))
-    Dt = float(input('What is the diamater of the tube in meters?'))
-    mu = float(input('What is the viscosity of the fluid in Pascal seconds?'))
-    SR = float(input('What is the strain rate in per second?'))
-    vt = SR * L
-    Q = vt * pi * (Dt / 2) ** 2
-    vs = Q / (pi * (Ds / 2) ** 2)
-    DelP = 32 * mu * L * vt / (Dt ** 2)
+    Ds = 0.01
+    Dt = 0.01
+    mu = 0.01
+    SR = 1
+    L = 0.01
+    #while (mu <= 5):
+    DelP = 4 * L * mu * SR / Dt
     F = DelP / (pi * (Dt/2) ** 2)
-    print('vt')
-    print(vt)
-    print('vs')
-    print(vs)
-    print('Q')
-    print(Q)
-    print('DelP')
-    print(DelP)
-    print('F')
+    Q = pi * (Dt/2) ** 3 * SR / 4
+        #my_pressures.append(DelP)
+        #my_forces.append(F)
+        #my_volumetric_flowrates.append(Q)
+        #fluid_viscosity.append(mu)
+        #mu = mu + 0.0005
     print(F)
-    Print('fuck you')
+
+if __name__ == '__main__':
+
+    try:
+        loop()
+    except KeyboardInterrupt:
+        quit(0)
+    #final_array = [my_pressures, fluid_viscosity, my_forces, my_volumetric_flowrates]
+
+    #import csv
+
+    #with open('data.csv', 'w') as csvFile:
+    #    writer = csv.writer(csvFile)
+    #   writer.writerows(final_array)
+
+    #csvFile.close()
+    quit(0)
