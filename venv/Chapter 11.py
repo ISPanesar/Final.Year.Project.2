@@ -47,7 +47,7 @@ def loop():
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
-        moveSteps(1, x, 512)
+        moveSteps(1, x, 2)
         time.sleep(0.001)
 
 
