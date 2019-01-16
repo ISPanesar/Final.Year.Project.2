@@ -5,6 +5,7 @@ import time
 motorPins = (12, 16, 18, 22)
 CCWStep = (0x01, 0x01 + 0x02, 0x02, 0x02 + 0x04, 0x04, 0x04 + 0x08, 0x08, 0x08 + 0x01)
 CWStep = (0x08, 0x04, 0x02, 0x01)
+x = 7
 
 
 def setup():
@@ -12,7 +13,6 @@ def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(38, GPIO.IN)
     GPIO.setup(40, GPIO.IN)
-    x = 7
     for pin in motorPins:
         GPIO.setup(pin, GPIO.OUT)
 
