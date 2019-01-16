@@ -11,8 +11,8 @@ x = 7
 def setup():
     print('Program is starting...')
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(38, GPIO.IN)
-    GPIO.setup(40, GPIO.IN)
+    GPIO.setup(38, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(40, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     for pin in motorPins:
         GPIO.setup(pin, GPIO.OUT)
 
