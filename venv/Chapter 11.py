@@ -41,7 +41,7 @@ def motorStop():
 
 def loop():
     while True:
-       global x
+        global x
         if (GPIO.input(40) == False):
             if (x > 1):
                 x = x - 1
