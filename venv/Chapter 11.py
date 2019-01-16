@@ -47,7 +47,7 @@ def loop():
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
-        if (GPIO.input(38) == TRUE):
+        if (GPIO.input(38) == True):
             print('working')
             if (x < 15):
                 x = x + 1
