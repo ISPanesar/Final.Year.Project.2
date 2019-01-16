@@ -42,19 +42,19 @@ def motorStop():
 def loop():
     while True:
         global x
-        if (GPIO.input(40) == False):
+        if GPIO.input(40) == True:
             print('working')
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
-        if (GPIO.input(38) == False):
+        if (GPIO.input(38) == TRUE):
             print('working')
             if (x < 15):
                 x = x + 1
                 print('Slowing down')
         moveSteps(1, x, 512)
         time.sleep(0.001)
-        
+
 
 def destroy():
     GPIO.cleanup()
