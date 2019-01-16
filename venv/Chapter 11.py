@@ -43,13 +43,15 @@ def loop():
     while True:
         if (GPIO.input(40) == False):
             if (x > 1):
+                global x
                 x = x - 1
                 print('Speeding up')
         if (GPIO.input(38) == False):
             if (x < 15):
+                global x
                 x = x + 1
                 print('Slowing down')
-
+        global x
         moveSteps(1, x, 512)
         time.sleep(0.001)
 
