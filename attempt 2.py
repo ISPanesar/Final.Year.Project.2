@@ -4,7 +4,7 @@ import time
 def setup():
     x = 0
 
-    GPIO.setmode(BCM)
+    GPIO.setmode(GPIO.BCM)
     GPIO.setup(21, GPIO.IN)
     GPIO.setup(20, GPIO.IN)
     GPIO.setup(16, GPIO.OUT)
