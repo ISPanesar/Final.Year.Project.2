@@ -42,12 +42,12 @@ def motorStop():
 def loop():
     while True:
         global x
-        if GPIO.input(40) == True:
+        if GPIO.input(40) == False:
             print('working')
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
-        if (GPIO.input(38) == True):
+        if (GPIO.input(38) == False):
             print('working')
             if (x < 15):
                 x = x + 1
