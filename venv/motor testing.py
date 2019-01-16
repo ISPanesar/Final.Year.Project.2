@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-x = 0
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.IN)
@@ -12,6 +11,7 @@ p.start(0)
 
 
 def loop():
+    x = 0
     while True:
         p.ChangeDutyCycle(x)
         if (GPIO.input(26) == False):
