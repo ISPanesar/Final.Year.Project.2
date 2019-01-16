@@ -5,6 +5,7 @@ import time
 motorPins = (12, 16, 18, 22)
 CCWStep = (0x01, 0x01 + 0x02, 0x02, 0x02 + 0x04, 0x04, 0x04 + 0x08, 0x08, 0x08 + 0x01)
 CWStep = (0x08, 0x04, 0x02, 0x01)
+x = 7
 
 
 def setup():
@@ -12,7 +13,6 @@ def setup():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(38, GPIO.IN)
     GPIO.setup(40, GPIO.IN)
-    x = 7
     for pin in motorPins:
         GPIO.setup(pin, GPIO.OUT)
 
@@ -41,6 +41,7 @@ def motorStop():
 
 def loop():
     while True:
+       global x
         if (GPIO.input(40) == False):
             if (x > 1):
                 x = x - 1
@@ -49,7 +50,6 @@ def loop():
             if (x < 15):
                 x = x + 1
                 print('Slowing down')
-
         moveSteps(1, x, 512)
         time.sleep(0.001)
 
