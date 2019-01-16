@@ -14,12 +14,12 @@ def loop():
     x = 0
     while True:
         p.ChangeDutyCycle(x)
-        if (GPIO.input(26) == False):
+        if (GPIO.input(21) == False):
             if (x < 50):
                 print('POWERRRRR')
                 x = x + 1
                 time.sleep(0.2)
-            if (GPIO.input(19) == False):
+            if (GPIO.input(20) == False):
                 if (x > 0):
                     print('SLOWWWWW')
                     x = x - 1
