@@ -11,8 +11,8 @@ p.start(0)
 
 
 def loop():
-    x = 0
     while True:
+        x = 0
         p.ChangeDutyCycle(x)
         if (GPIO.input(21) == False):
             if (x < 50):
