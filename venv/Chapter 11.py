@@ -47,12 +47,7 @@ def loop():
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
-        if (GPIO.input(38) == False):
-            print('working')
-            if (x < 15):
-                x = x + 1
-                print('Slowing down')
-        moveSteps(1, x, 512)
+        moveSteps(1, x, 2)
         time.sleep(0.001)
 
 
@@ -66,3 +61,5 @@ if __name__ == '__main__':
         loop()
     except KeyboardInterrupt:
         destroy()
+
+        
