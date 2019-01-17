@@ -11,8 +11,8 @@ x = 7
 def setup():
     print('Program is starting...')
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(38, GPIO.IN)
-    GPIO.setup(40, GPIO.IN)
+    GPIO.setup(38, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(40, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     for pin in motorPins:
         GPIO.setup(pin, GPIO.OUT)
 
@@ -41,12 +41,14 @@ def motorStop():
 
 def loop():
     while True:
-       global x
-        if (GPIO.input(40) == False):
+        global x
+        if GPIO.input(40) == False:
+            print('working')
             if (x > 1):
                 x = x - 1
                 print('Speeding up')
         if (GPIO.input(38) == False):
+            print('working')
             if (x < 15):
                 x = x + 1
                 print('Slowing down')
