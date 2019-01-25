@@ -32,14 +32,14 @@ def rotaryDeal():
 		flag = 0
 		if (Last_RoB_Status == 0) and (Current_RoB_Status == 1):
 			globalCounter = globalCounter + 1
-			print ('globalCounter = %d' % globalCounter)
+			print('globalCounter = %d' % globalCounter)
 		if (Last_RoB_Status == 1) and (Current_RoB_Status == 0):
 			globalCounter = globalCounter - 1
-			print ('globalCounter = %d' % globalCounter)
+			print('globalCounter = %d' % globalCounter)
 
 def clear(ev=None):
         globalCounter = 0
-	print ('globalCounter = %d' % globalCounter)
+	print('globalCounter = %d' % globalCounter)
 	time.sleep(1)
 
 def rotaryClear():
@@ -50,7 +50,7 @@ def loop():
 	global globalCounter
 	while True:
 		rotaryDeal()
-#		print ('globalCounter = %d' % globalCounter)
+#		print('globalCounter = %d' % globalCounter)
 
 def destroy():
 	GPIO.cleanup()             # Release resource
