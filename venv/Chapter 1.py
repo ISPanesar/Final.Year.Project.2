@@ -1,20 +1,20 @@
 import RPi.GPIO as GPIO
 import time
 
-ledpin = 17
+
 
 def setup():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(ledpin, GPIO.IN)
+    GPIO.setup(17, GPIO.IN)
+    ledpin = GPIO.input(17)
     print('using pin%d'%ledpin)
 
 def loop():
     while True:
-        if GPIO.input(ledpin, GPIO.HIGH):
+        if (ledpin is True):
             print ('...led on')
             time.sleep(1)
         else:
-            GPIO.input(ledpin, GPIO.LOW)
             print ('led off...')
             time.sleep(1)
 
