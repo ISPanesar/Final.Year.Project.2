@@ -4,30 +4,28 @@ import time
 
 
 
-def setup():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(17, GPIO.IN)
-    global ledpin 
-    ledpin = GPIO.input(17)
-    print('using pin%d'%ledpin)
 
-def loop():
-    while True:
-        if (ledpin is True):
-            print ('...led on')
-            time.sleep(1)
-        else:
-            print ('led off...')
-            time.sleep(1)
-
+    
 def destroy():
     GPIO.input(ledpin, GPIO.LOW)
     GPIO.cleanup()
 
 if __name__ == '__main__':
-    setup()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(17, GPIO.IN)
+    global ledpin 
+    ledpin = GPIO.input(17)
+    print('using pin%d'%ledpin)
     try:
-        loop()
+        while True:
+            if (ledpin is True):
+                print ('...led on')
+                time.sleep(1)
+            elseif (ledpin is False):
+                print ('led off...')
+                time.sleep(1)
+            else:
+                print('fuck you')
     except KeyboardInterrupt:
 
         destroy()
