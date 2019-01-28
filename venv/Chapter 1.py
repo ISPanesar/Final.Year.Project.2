@@ -5,17 +5,18 @@ ledpin = 17
 
 def setup():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(ledpin, GPIO.OUT, initial=0)
+    GPIO.setup(ledpin, GPIO.IN)
     print('using pin%d'%ledpin)
 
 def loop():
     while True:
-        GPIO.output(ledpin, GPIO.HIGH)
-        print ('...led on')
-        time.sleep(1)
-        GPIO.output(ledpin, GPIO.LOW)
-        print ('led off...')
-        time.sleep(1)
+        if GPIO.output(ledpin, GPIO.HIGH):
+            print ('...led on')
+            time.sleep(1)
+        else:
+            GPIO.output(ledpin, GPIO.LOW)
+            print ('led off...')
+            time.sleep(1)
 
 def destroy():
     GPIO.output(ledpin, GPIO.LOW)
