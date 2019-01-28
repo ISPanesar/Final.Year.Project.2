@@ -10,16 +10,16 @@ def setup():
 
 def loop():
     while True:
-        if GPIO.output(ledpin, GPIO.HIGH):
+        if GPIO.input(ledpin, GPIO.HIGH):
             print ('...led on')
             time.sleep(1)
         else:
-            GPIO.output(ledpin, GPIO.LOW)
+            GPIO.input(ledpin, GPIO.LOW)
             print ('led off...')
             time.sleep(1)
 
 def destroy():
-    GPIO.output(ledpin, GPIO.LOW)
+    GPIO.input(ledpin, GPIO.LOW)
     GPIO.cleanup()
 
 if __name__ == '__main__':
