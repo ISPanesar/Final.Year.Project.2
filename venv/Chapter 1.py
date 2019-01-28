@@ -18,10 +18,10 @@ if __name__ == '__main__':
     print('using pin%d'%ledpin)
     try:
         while True:
-            if (ledpin is True):
+            if (ledpin is GPIO.HIGH):
                 print ('...led on')
                 time.sleep(1)
-            elif (ledpin is False):
+            elif (ledpin is GPIO.LOW):
                 print ('led off...')
                 time.sleep(1)
             else:
