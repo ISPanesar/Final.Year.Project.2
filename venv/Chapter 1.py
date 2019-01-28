@@ -6,7 +6,7 @@ import time
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(17, GPIO.IN)
-    global ledpin = GPIO.input(17)
+    global ledpin == GPIO.input(17)
     print('using pin%d'%ledpin)
 
 def loop():
