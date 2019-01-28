@@ -21,7 +21,7 @@ if __name__ == '__main__':
             if (ledpin is True):
                 print ('...led on')
                 time.sleep(1)
-            elseif (ledpin is False):
+            elif (ledpin is False):
                 print ('led off...')
                 time.sleep(1)
             else:
