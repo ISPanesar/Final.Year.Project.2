@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 import sys
-from HX711 import HX711
+from hx711 import HX711
+
 
 
 def cleanAndExit():
