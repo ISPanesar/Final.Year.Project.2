@@ -10,9 +10,9 @@ def setup():
 
 def detect():
     if GPIO.input(17) == True:
-        print('state 1')
+        print('Obstructed')
     else:
-        print('state 2')
+        print('Clear')
 
 
 def loop():
