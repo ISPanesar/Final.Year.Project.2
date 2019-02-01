@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 import RPi.GPIO as GPIO
 
-LightInPin = 17
-
 
 def setup():
     GPIO.setmode(GPIO.BOARD) # Set GPIO as PIN Numbers
-    GPIO.setup(LightInPin, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
-    GPIO.add_event_detect(LightInPin, GPIO.BOTH, callback=detect, bouncetime=200)
+    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
+    GPIO.add_event_detect(17, GPIO.BOTH, callback=detect, bouncetime=200)
 
 
 def detect():
