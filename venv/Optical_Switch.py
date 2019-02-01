@@ -11,17 +11,17 @@ def setup():
 def loop():
     count = 0
     while True:
-        if GPIO.input(17) == False:
+        if GPIO.input(17) == True:
             currenttime = time.time()
-            print('Clear')
-            while GPIO.input(17) == False:
+            print('obstructed')
+            while GPIO.input(17) == True:
                 time.sleep(0.01)
             count = count + 1
             global rotationtime
             rotationtime = time.time() - currenttime
         else:
-            print('Obstructed')
-        print('The count is d%, the step time is %d ') % (count, rotationtime)
+            print('Clear')
+        print('The count is %d, the step time is %d ') % (count, rotationtime)
 
 def destroy():
     GPIO.cleanup() # Release resource
