@@ -23,7 +23,7 @@ def loop():
             rotationtime = time.time() - currenttime
         else:
             print('Clear')
-        print('The count is %d, the step time is %d ') % (count, rotationtime)
+        print('The count is %s, the step time is %s ' % (count, rotationtime))
 
 def destroy():
     GPIO.cleanup() # Release resource
