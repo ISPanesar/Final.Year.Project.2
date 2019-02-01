@@ -9,7 +9,10 @@ def setup():
 
 
 def loop():
+    global count
     count = 0
+    global rotationtime
+    rotationtime = 0
     while True:
         if GPIO.input(17) == True:
             currenttime = time.time()
@@ -17,7 +20,6 @@ def loop():
             while GPIO.input(17) == True:
                 time.sleep(0.01)
             count = count + 1
-            global rotationtime
             rotationtime = time.time() - currenttime
         else:
             print('Clear')
