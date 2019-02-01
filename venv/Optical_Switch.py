@@ -32,3 +32,4 @@ if __name__ == '__main__': # Set the Program start from here
         loop()
     except KeyboardInterrupt: # When pressed 'Ctrl+C' child program destroy() will be executed.
         destroy()
+
