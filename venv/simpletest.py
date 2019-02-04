@@ -67,7 +67,7 @@ while True:
     if values[1] < 100:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
-        Print ('Reversing')
+        print('Reversing')
     elif values[1] == 1496:
         GPIO.output(motoRPin1, GPIO.LOW)
         GPIO.output(motoRPin2, GPIO.LOW)
