@@ -3,7 +3,7 @@
 # Author: Tony DiCola
 # License: Public Domain
 import time
-import Rpi.GPIO as GPIO
+import RPi.GPIO as GPIO
 # Import the ADS1x15 module.
 import ADS1x15
 
