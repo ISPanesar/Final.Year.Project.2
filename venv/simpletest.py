@@ -64,7 +64,7 @@ while True:
     print('| {0:>6} |'.format(*values))
     # Pause for half a second.
     time.sleep(0.3)
-    if values[1] == 100:
+    if values[1] < 100:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         Print ('Reversing')
