@@ -52,7 +52,7 @@ while True:
 
 
     # Read the specified ADC channel using the previously set gain value.
-    values = adc.read_adc(1, gain=GAIN)
+    values = adc.read_adc(0, gain=GAIN)
     # Note you can also pass in an optional data_rate parameter that controls
     # the ADC conversion time (in samples/second). Each chip has a different
     # set of allowed data rate values, see datasheet Table 9 config register
