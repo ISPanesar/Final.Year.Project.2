@@ -49,26 +49,26 @@ print('-' * 37)
 while True:
     # Read all the ADC channel values in a list.
 
-    values = [1495]
-    for i in range(1):
-        # Read the specified ADC channel using the previously set gain value.
-        values[i] = adc.read_adc(i, gain=GAIN)
-        # Note you can also pass in an optional data_rate parameter that controls
-        # the ADC conversion time (in samples/second). Each chip has a different
-        # set of allowed data rate values, see datasheet Table 9 config register
-        # DR bit values.
-        #values[i] = adc.read_adc(i, gain=GAIN, data_rate=128)
-        # Each value will be a 12 or 16 bit signed integer value depending on the
-        # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
+
+
+    # Read the specified ADC channel using the previously set gain value.
+    values = adc.read_adc(i, gain=GAIN)
+    # Note you can also pass in an optional data_rate parameter that controls
+    # the ADC conversion time (in samples/second). Each chip has a different
+    # set of allowed data rate values, see datasheet Table 9 config register
+    # DR bit values.
+    #values[i] = adc.read_adc(i, gain=GAIN, data_rate=128)
+    # Each value will be a 12 or 16 bit signed integer value depending on the
+    # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
     # Print the ADC values.
     print('| {0:>6} |'.format(*values))
     # Pause for half a second.
     time.sleep(0.3)
-    if values[1] < 100:
+    if values < 100:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         print('Reversing')
-    elif values[1] > 1496:
+    elif values > 1496:
         GPIO.output(motoRPin1, GPIO.LOW)
         GPIO.output(motoRPin2, GPIO.LOW)
         print('stopping')
