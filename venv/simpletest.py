@@ -3,10 +3,21 @@
 # Author: Tony DiCola
 # License: Public Domain
 import time
-
+import Rpi.GPIO as GPIO
 # Import the ADS1x15 module.
 import ADS1x15
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+motoRPin1 = 27
+motoRPin2 = 17
+enablePin = 22
+GPIO.setup(motoRPin1, GPIO.OUT)
+GPIO.setup(motoRPin2, GPIO.OUT)
+GPIO.setup(enablePin, GPIO.OUT)
+
+p = GPIO.PWM(enablePin, 1000)
+p.start(100)
 
 # Create an ADS1115 ADC (16-bit) instance.
 adc = ADS1x15.ADS1015()
@@ -28,7 +39,8 @@ adc = ADS1x15.ADS1015()
 #  -  16 = +/-0.256V
 # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
 GAIN = 1
-
+GPIO.output(motoRPin1, GPIO.HIGH)
+GPIO.output(motoRPin2, GPIO.LOW)
 print('Reading ADS1x15 values, press Ctrl-C to quit...')
 # Print nice channel column headers.
 print('| {0:>6} |'.format(*range(1)))
@@ -36,6 +48,7 @@ print('-' * 37)
 # Main loop.
 while True:
     # Read all the ADC channel values in a list.
+
     values = [0]*4
     for i in range(1):
         # Read the specified ADC channel using the previously set gain value.
@@ -51,3 +64,12 @@ while True:
     print('| {0:>6} |'.format(*values))
     # Pause for half a second.
     time.sleep(0.3)
+    if values[1] == 100:
+        GPIO.output(motoRPin2, GPIO.HIGH)
+        GPIO.output(motoRPin1, GPIO.LOW)
+        Print ('Reversing')
+    elif values[1] == 1496:
+        GPIO.output(motoRPin1, GPIO.LOW)
+        GPIO.output(motoRPin2, GPIO.LOW)
+        print('stopping')
+        GPIO.cleanup
