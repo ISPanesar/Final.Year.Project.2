@@ -297,7 +297,7 @@ while True:
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
-        print("| {} | {} | {} | {} | {} | {} |".format(count, str(round(Length, 2)) + "mm", str(round(Force, 5)) + "N", mode, reading, values))
+        print("| {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm", str(round(Force, 5)) + "N", mode, reading, values))
 
     time.sleep(0.3)
 
