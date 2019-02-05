@@ -221,20 +221,7 @@ class sensor:
 
 
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
-motoRPin1 = 27
-motoRPin2 = 17
-enablePin = 22
-GPIO.setup(motoRPin1, GPIO.OUT)
-GPIO.setup(motoRPin2, GPIO.OUT)
-GPIO.setup(enablePin, GPIO.OUT)
 
-p = GPIO.PWM(enablePin, 1000)
-p.start(100)
-
-# Create an ADS1115 ADC (16-bit) instance.
-adc = ADS1x15.ADS1015()
 
 # Or create an ADS1015 ADC (12-bit) instance.
 #adc = Adafruit_ADS1x15.ADS1015()
@@ -252,9 +239,7 @@ adc = ADS1x15.ADS1015()
 #  -   8 = +/-0.512V
 #  -  16 = +/-0.256V
 # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
-GAIN = 1
-GPIO.output(motoRPin1, GPIO.HIGH)
-GPIO.output(motoRPin2, GPIO.LOW)
+
 print('Reading ADS1x15 values, press Ctrl-C to quit...')
 # Print nice channel column headers.
 print('| {0:>6} |'.format(*range(1)))
@@ -275,7 +260,25 @@ s.set_mode(HX711.CH_A_GAIN_64)
 c, mode, reading = s.get_reading()
 
 stop = time.time() + 3600
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+motoRPin1 = 27
+motoRPin2 = 17
+enablePin = 22
+GPIO.setup(motoRPin1, GPIO.OUT)
+GPIO.setup(motoRPin2, GPIO.OUT)
+GPIO.setup(enablePin, GPIO.OUT)
 
+p = GPIO.PWM(enablePin, 1000)
+p.start(100)
+GAIN = 1
+GPIO.output(motoRPin1, GPIO.HIGH)
+GPIO.output(motoRPin2, GPIO.LOW)
+# Create an ADS1115 ADC (16-bit) instance.
+adc = ADS1x15.ADS1015()
+GAIN = 1
+GPIO.output(motoRPin1, GPIO.HIGH)
+GPIO.output(motoRPin2, GPIO.LOW)
 print("| Step | Position | Force | Mode | Raw HX711 |")
 while True:
     # Read all the ADC channel values in a list.
