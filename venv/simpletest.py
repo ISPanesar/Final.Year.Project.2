@@ -293,10 +293,10 @@ while True:
     # Print the ADC values.
     count, mode, reading = s.get_reading()
 
-
-    c = count
-    Force = 0.00004 * (reading - 283000)
-    print("| {0} | {0} | {0:.5f} | {0} | {0} |".format(count, values, Force, mode, reading))
+    if count != c:
+        c = count
+        Force = 0.00004 * (reading - 283000)
+        print("| {0:.0f} | {0:.0f} | {0:.5f} | {0:.0f} | {0:.0f} |".format(count, values, Force, mode, reading))
 
     time.sleep(0.3)
 
