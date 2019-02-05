@@ -292,11 +292,11 @@ while True:
     # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
     # Print the ADC values.
     count, mode, reading = s.get_reading()
-
+    print("| Step | Position | Force | Mode | Raw HX711 |")
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
-        print("| {} | {} | {} |".format(count, mode, reading))
+        print("| {} | {} | {} | {} | {} |".format(count, values, Force, mode, reading))
         print('| ' + str(values) + ' | ' + str(Force) + ' |')
     time.sleep(0.3)
 
