@@ -297,7 +297,7 @@ while True:
         c = count
         Force = 0.00004 * (reading - 283000)
         print("| {0} | {0} | {0:.5f} | {0} | {0} |".format(count, values, Force, mode, reading))
-        print('| ' + str(values) + ' | ' + str(Force) + ' |')
+
     time.sleep(0.3)
 
     # Pause for 0.3 of a second.
