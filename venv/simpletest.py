@@ -260,8 +260,8 @@ print('Reading ADS1x15 values, press Ctrl-C to quit...')
 print('| {0:>6} |'.format(*range(1)))
 print('-' * 37)
 # Main loop.
-def cbf(count, mode, reading):
-    print(count, mode, reading)
+
+
 
 
 pi = pigpio.pi()
@@ -269,7 +269,7 @@ if not pi.connected:
     exit(0)
 
 s = HX711.sensor(
-    pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32, callback=cbf)
+    pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
 s.set_mode(HX711.CH_A_GAIN_64)
 c, mode, reading = s.get_reading()
@@ -296,6 +296,7 @@ while True:
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
+        print("{} {} {}".format(count, mode, reading))
         print('| ' + str(values) + ' | ' + str(Force) + ' |')
     time.sleep(0.3)
 
