@@ -296,13 +296,13 @@ while True:
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
-        length = (values/1496) * 110
+        length = ((values - 90 )/1406) * 110
         print("| {} | {} | {} | {} | {} | {} |".format(count, str(round(Length, 2)) + "mm", str(round(Force, 5)) + "N", mode, reading, values))
 
     time.sleep(0.3)
 
     # Pause for 0.3 of a second.
-    if values < 100:
+    if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         print('Reversing')
