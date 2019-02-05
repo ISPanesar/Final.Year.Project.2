@@ -276,7 +276,7 @@ c, mode, reading = s.get_reading()
 
 stop = time.time() + 3600
 
-print("| Step | Position | Force | Mode | Raw HX711 |")
+print("| Step | Position | Force | Mode | Raw HX711 | Raw Pot |")
 while True:
     # Read all the ADC channel values in a list.
 
@@ -296,7 +296,8 @@ while True:
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
-        print("| {} | {} | {} | {} | {} |".format(count, values, str(round(Force, 5)), mode, reading))
+        length = (values/1496) * 110
+        print("| {} | {} | {} | {} | {} | {} |".format(count, str(round(Length, 2)) + "mm", str(round(Force, 5)) + "N", mode, reading, values))
 
     time.sleep(0.3)
 
