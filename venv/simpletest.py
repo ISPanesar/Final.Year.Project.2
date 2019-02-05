@@ -7,7 +7,13 @@ import RPi.GPIO as GPIO
 # Import the ADS1x15 module.
 import ADS1x15
 CH_A_GAIN_64  = 0
+CH_A_GAIN_128 = 1
+CH_B_GAIN_32  = 2
+DATA_CLKS = 24
+X_128_CLK = 25
+X_32_CLK  = 26
 X_64_CLK  = 27
+
 PULSE_LEN = 15
 TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
 SETTLE_READINGS = 5
