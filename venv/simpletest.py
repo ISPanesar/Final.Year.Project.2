@@ -276,7 +276,7 @@ c, mode, reading = s.get_reading()
 
 stop = time.time() + 3600
 
-
+print("| Step | Position | Force | Mode | Raw HX711 |")
 while True:
     # Read all the ADC channel values in a list.
 
@@ -292,7 +292,7 @@ while True:
     # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
     # Print the ADC values.
     count, mode, reading = s.get_reading()
-    print("| Step | Position | Force | Mode | Raw HX711 |")
+
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
