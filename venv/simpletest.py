@@ -1,26 +1,30 @@
-# Simple demo of reading each analog input from the ADS1x15 and printing it to
-# the screen.
-# Author: Tony DiCola
-# License: Public Domain
+# code to run the syringe pump.
+# import the current time and the GPIO module.
 import time
 import RPi.GPIO as GPIO
 # Import the ADS1x15 module.
 import ADS1x15
+# This imports the pigpio module and the HX711 module for the load cell
+import pigpio  # http://abyz.co.uk/rpi/pigpio/python.html
+import HX711
+# This sets the value assigned to each gain
 CH_A_GAIN_64  = 0
 CH_A_GAIN_128 = 1
 CH_B_GAIN_32  = 2
+
+# This sets the clocking rate
 DATA_CLKS = 24
 X_128_CLK = 25
 X_32_CLK  = 26
 X_64_CLK  = 27
 
+# This sets the pulse length and the timeout limit
 PULSE_LEN = 15
 TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
 SETTLE_READINGS = 5
-import pigpio  # http://abyz.co.uk/rpi/pigpio/python.html
-import HX711
 
 
+# This is the class for the HX711 sensor module
 class sensor:
     """
     A class to read the HX711 24-bit ADC.
@@ -219,8 +223,7 @@ class sensor:
             self._previous_edge_long = current_edge_long
 
 
-
-
+# This is used to set the GPIO's needed for the L293D motor driver and start PWM
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
 motoRPin1 = 27
@@ -233,15 +236,12 @@ GPIO.setup(enablePin, GPIO.OUT)
 p = GPIO.PWM(enablePin, 1000)
 p.start(100)
 
-# Create an ADS1115 ADC (16-bit) instance.
+# Create an ADS1015 ADC (12-bit) instance.
 adc = ADS1x15.ADS1015()
-
-# Or create an ADS1015 ADC (12-bit) instance.
-#adc = Adafruit_ADS1x15.ADS1015()
 
 # Note you can change the I2C address from its default (0x48), and/or the I2C
 # bus by passing in these optional parameters:
-#adc = Adafruit_ADS1x15.ADS1015(address=0x49, busnum=1)
+# adc = Adafruit_ADS1x15.ADS1015(address=0x49, busnum=1)
 
 # Choose a gain of 1 for reading voltages from 0 to 4.09V.
 # Or pick a different gain to change the range of voltages that are read:
@@ -257,13 +257,9 @@ GPIO.output(motoRPin1, GPIO.HIGH)
 GPIO.output(motoRPin2, GPIO.LOW)
 print('Reading ADS1x15 values, press Ctrl-C to quit...')
 # Print nice channel column headers.
-print('| {0:>6} |'.format(*range(1)))
 print('-' * 37)
 # Main loop.
-
-
-
-
+# This is used to pull data from the load cell
 pi = pigpio.pi()
 if not pi.connected:
     exit(0)
@@ -275,24 +271,15 @@ s.set_mode(HX711.CH_A_GAIN_64)
 c, mode, reading = s.get_reading()
 
 stop = time.time() + 3600
-
+# This sets the column headings
 print("| Step | Position | Force | Mode | Raw HX711 | Raw Pot |")
 while True:
-    # Read all the ADC channel values in a list.
-
-
-    # Read the specified ADC channel using the previously set gain value.
+    # Read the ADC channel values in a list.
     values = adc.read_adc(0, gain=GAIN)
-    # Note you can also pass in an optional data_rate parameter that controls
-    # the ADC conversion time (in samples/second). Each chip has a different
-    # set of allowed data rate values, see datasheet Table 9 config register
-    # DR bit values.
-    #values[i] = adc.read_adc(i, gain=GAIN, data_rate=128)
-    # Each value will be a 12 or 16 bit signed integer value depending on the
-    # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
-    # Print the ADC values.
     count, mode, reading = s.get_reading()
-
+    """ This calculates the force on the load cell, the distance
+    along the track the syringe has moved and outputs the raw data along 
+    with the number of steps"""
     if count != c:
         c = count
         Force = 0.00004 * (reading - 283000)
@@ -302,13 +289,20 @@ while True:
     time.sleep(0.3)
 
     # Pause for 0.3 of a second.
+    """90 is the limit of the track so the system moves to the end of the track 
+    before reversing 1500 is the start of the track """
     if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         print('Reversing')
-    elif values > 1496:
+    elif values > 1500:
         GPIO.output(motoRPin1, GPIO.LOW)
         GPIO.output(motoRPin2, GPIO.LOW)
         print('stopping')
         GPIO.cleanup()
         exit()
+        """Please note that the Force and length of the track needs to be 
+        calibrated to be used with this program apply a known force to the 
+        load cell and use this to calibrate the raw data, use a set of calipers
+        to determine the length of the track and use the program to see the
+        raw data limitations for the hardware"""
