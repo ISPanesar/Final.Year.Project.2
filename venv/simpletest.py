@@ -6,6 +6,19 @@ import time
 import RPi.GPIO as GPIO
 # Import the ADS1x15 module.
 import ADS1x15
+import sys
+from hx711 import HX711
+
+def cleanAndExit():
+    print("Cleaning...")
+    GPIO.cleanup()
+    print("Bye!")
+    sys.exit()
+
+
+hx = HX711(5, 6)
+hx.set_reading_format("MSB", "MSB")
+hx.reset()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT)
@@ -49,7 +62,7 @@ print('-' * 37)
 while True:
     # Read all the ADC channel values in a list.
 
-
+    val = hx.read_long()
 
     # Read the specified ADC channel using the previously set gain value.
     values = adc.read_adc(0, gain=GAIN)
@@ -61,7 +74,9 @@ while True:
     # Each value will be a 12 or 16 bit signed integer value depending on the
     # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
     # Print the ADC values.
-    print('| ' + str(values) + ' |')
+    print('| ' + str(values) + ' | ' + str(val) + ' | ')
+    hx.power_down()
+    hx.power_up()
     # Pause for half a second.
     time.sleep(0.3)
     if values < 100:
@@ -72,5 +87,5 @@ while True:
         GPIO.output(motoRPin1, GPIO.LOW)
         GPIO.output(motoRPin2, GPIO.LOW)
         print('stopping')
-        GPIO.cleanup
-        exit()
+        cleanAndExit()
+
