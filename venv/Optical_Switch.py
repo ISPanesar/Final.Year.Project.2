@@ -15,13 +15,13 @@ def loop():
     rotationtime = 0
     while True:
         if GPIO.input(17) == True:
-            print('obstructed')
-        elif GPIO.input(17) == False:
             currenttime = time.time()
-            while GPIO.input(17) == False:
+            print('obstructed')
+            while GPIO.input(17) == True:
                 time.sleep(0.01)
             count = count + 1
             rotationtime = time.time() - currenttime
+        else:
             print('Clear')
         print('The count is %s, the step time is %s ' % (count, rotationtime))
 
