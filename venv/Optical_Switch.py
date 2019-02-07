@@ -16,10 +16,6 @@ def loop():
     while True:
         if GPIO.input(17) == True:
             print('obstructed')
-            while GPIO.input(17) == False:
-                time.sleep(0.01)
-            count = count + 1
-            rotationtime = time.time() - currenttime
         else:
             currenttime = time.time()
             while GPIO.input(17) == False:
