@@ -16,7 +16,7 @@ def loop():
     while True:
         if GPIO.input(17) == True:
             print('obstructed')
-        else:
+        elif GPIO.input(17) == False:
             currenttime = time.time()
             while GPIO.input(17) == False:
                 time.sleep(0.01)
