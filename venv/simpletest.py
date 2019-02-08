@@ -280,6 +280,7 @@ starttime = time.time()
 RPM = 0
 while True:
     if GPIO.input(6) == False:
+        time.sleep(0.01)
         if GPIO.input(6) == True:
             count = count + 1
     if (time.time() - starttime) == 5:
