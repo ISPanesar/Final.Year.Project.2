@@ -232,7 +232,7 @@ enablePin = 22
 GPIO.setup(motoRPin1, GPIO.OUT)
 GPIO.setup(motoRPin2, GPIO.OUT)
 GPIO.setup(enablePin, GPIO.OUT)
-
+GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 p = GPIO.PWM(enablePin, 1000)
 p.start(100)
 
@@ -272,8 +272,23 @@ c, mode, reading = s.get_reading()
 
 stop = time.time() + 3600
 # This sets the column headings
-print("| Step | Position | Force | Mode | Raw HX711 | Raw Pot |")
+print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
+
+count = 0
+rotationtime = 0
+starttime = time.time()
+RPM = 0
 while True:
+    if GPIO.input(6) == True:
+        currenttime = time.time()
+        while GPIO.input(6) == True:
+            time.sleep(0.01)
+        count = count + 1
+        rotationtime = time.time() - currenttime
+    if (time.time() - starttime) == 5:
+        RPM = count/5
+        starttime = time.time()
+
     # Read the ADC channel values in a list.
     values = adc.read_adc(0, gain=GAIN)
     count, mode, reading = s.get_reading()
@@ -284,7 +299,7 @@ while True:
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
-        print("| {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm", str(round(Force, 5)) + "N", mode, reading, values))
+        print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm", str(round(Force, 5)) + "N", str(count), str(round(RPM, 0)), mode, reading, values))
 
     time.sleep(0.3)
 

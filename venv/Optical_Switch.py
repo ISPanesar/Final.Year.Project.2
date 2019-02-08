@@ -5,7 +5,7 @@ import time
 
 def setup():
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
-    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
+    GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
 
 
 def loop():
@@ -14,10 +14,10 @@ def loop():
     global rotationtime
     rotationtime = 0
     while True:
-        if GPIO.input(17) == True:
+        if GPIO.input(6) == True:
             currenttime = time.time()
             print('obstructed')
-            while GPIO.input(17) == True:
+            while GPIO.input(6) == True:
                 time.sleep(0.01)
             count = count + 1
             rotationtime = time.time() - currenttime
