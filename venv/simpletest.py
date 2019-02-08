@@ -279,7 +279,7 @@ rotationtime = 0
 starttime = time.time()
 RPM = 0
 while True:
-    if GPIO.input(6) == True:
+    if GPIO.input(6) == False:
         count = count + 1
     if (time.time() - starttime) == 5:
         RPM = count/5
