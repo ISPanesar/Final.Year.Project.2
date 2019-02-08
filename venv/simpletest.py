@@ -297,7 +297,7 @@ while True:
         length = 110 - (((values - 90 )/1406) * 110)
         print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm", str(round(Force, 5)) + "N", str(count), str(round(RPM, 0)), mode, reading, values))
 
-    time.sleep(0.3)
+    # time.sleep(0.3)
 
     # Pause for 0.3 of a second.
     """90 is the limit of the track so the system moves to the end of the track 
