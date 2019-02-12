@@ -5,8 +5,12 @@ import time
 
 def setup():
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
-    GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
-    #GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(5, GPIO.IN) # Set pull up to high level(3.3V)
+    GPIO.setup(6, GPIO.IN)
+    GPIO.add_event_detect(5, GPIO.RISING)
+    GPIO.add_event_detect(6, GPIO.RISING)
+
+
 
 def loop():
     global count
@@ -15,14 +19,22 @@ def loop():
     rotationtime = 0
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.input(5) == True:
+        if GPIO.add_event_detected(5):
             currenttime = time.time()
-            print('one rotation')
+            print('Pin 5 high | Pin 6 low')
+            GPIO.wait_for_edge(6, GPIO_RISING)
+            print('Pin 5 &6  high')
+            GPIO.wait_for_edge(5, GPIO_FALLING)
+            Print('Pin 5 low | Pin 6 high')
+            GPIO.wait_for_edge(6, GPIO_FALLING)
+            Print('Both pins low')
+
             count = count + 1
             rotationtime = time.time() - currenttime
+            print('The count is %s, the step time is %s ' % (count, rotationtime))
         else:
             print('Clear')
-        print('The count is %s, the step time is %s ' % (count, rotationtime))
+        # print('The count is %s, the step time is %s ' % (count, rotationtime))
 
 def destroy():
     GPIO.cleanup() # Release resource
