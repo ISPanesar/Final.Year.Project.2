@@ -25,9 +25,9 @@ def loop():
             GPIO.wait_for_edge(6, GPIO.RISING)
             print('Pin 5 &6  high')
             GPIO.wait_for_edge(5, GPIO.FALLING)
-            Print('Pin 5 low | Pin 6 high')
+            print('Pin 5 low | Pin 6 high')
             GPIO.wait_for_edge(6, GPIO.FALLING)
-            Print('Both pins low')
+            print('Both pins low')
 
             count = count + 1
             rotationtime = time.time() - currenttime
