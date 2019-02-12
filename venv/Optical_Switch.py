@@ -19,7 +19,7 @@ def loop():
     rotationtime = 0
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.add_event_detected(5):
+        if GPIO.event_detected(5):
             currenttime = time.time()
             print('Pin 5 high | Pin 6 low')
             GPIO.wait_for_edge(6, GPIO_RISING)
