@@ -22,11 +22,11 @@ def loop():
         if GPIO.event_detected(5):
             currenttime = time.time()
             print('Pin 5 high | Pin 6 low')
-            GPIO.wait_for_edge(6, GPIO.FALLING, bouncetime=300)
+            GPIO.wait_for_edge(6, GPIO.FALLING)
             print('Pin 5 &6  high')
-            GPIO.wait_for_edge(5, GPIO.RISING, bouncetime=300)
+            GPIO.wait_for_edge(5, GPIO.RISING)
             print('Pin 5 low | Pin 6 high')
-            GPIO.wait_for_edge(6, GPIO.RISING, bouncetime=300)
+            GPIO.wait_for_edge(6, GPIO.RISING)
             print('Both pins low')
 
             count = count + 1
