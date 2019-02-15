@@ -7,8 +7,8 @@ def setup():
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
     GPIO.setup(5, GPIO.IN) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN)
-    GPIO.add_event_detect(5, GPIO.FALLING, bouncetime=10000)
-    GPIO.add_event_detect(6, GPIO.RISING)
+    GPIO.add_event_detect(5, GPIO.RISING, bouncetime=10000)
+    GPIO.add_event_detect(6, GPIO.RISING, bouncetime=10000)
 
 
 
@@ -17,21 +17,18 @@ def loop():
     count = 0
     global rotationtime
     rotationtime = 0
+    currenttime = time.time()
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.event_detected(5):
-            currenttime = time.time()
-            print('Pin 5 high | Pin 6 low')
-            GPIO.wait_for_edge(6, GPIO.FALLING)
-            print('Pin 5 &6  high')
-            GPIO.wait_for_edge(5, GPIO.RISING)
-            print('Pin 5 low | Pin 6 high')
-            GPIO.wait_for_edge(6, GPIO.RISING)
-            print('Both pins low')
+        if GPIO.event_detected(5) and GPIO.event_detected(6):
 
             count = count + 1
-            rotationtime = time.time() - currenttime
-            print('The count is %s, the step time is %s ' % (count, rotationtime))
+            print('The count is %s' % (count))
+        elif time.time() - currenttime > 60:
+            RPM = (count/(time.time() - currenttime))*60/2
+            currenttime = time.time()
+            count = 0
+            print(str(RPM))
         else:
             print('Clear')
         # print('The count is %s, the step time is %s ' % (count, rotationtime))
