@@ -16,7 +16,7 @@ def loop():
     global count
     count = 0
     global rotationtime
-    rotationtime = 0
+    currenttime = time.time()
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
         if GPIO.event_detected(5) and GPIO.event_detected(6):
@@ -24,7 +24,12 @@ def loop():
 
             count = count + 1
             rotationtime = time.time() - currenttime
-            print('The count is %s, the step time is %s ' % (count, rotationtime))
+            print('The count is %s' % count)
+        elif time.time() - currenttime > 60:
+            RPM = count/(time.time()-currenttime)*60/2
+            print(str(RPM))
+            currenttime = time.time()
+            count = 0
         else:
             print('Clear')
         # print('The count is %s, the step time is %s ' % (count, rotationtime))
