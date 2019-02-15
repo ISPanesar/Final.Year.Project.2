@@ -7,7 +7,7 @@ def setup():
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
     GPIO.setup(5, GPIO.IN) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN)
-    GPIO.add_event_detect(5, GPIO.RISING)
+    GPIO.add_event_detect(5, GPIO.RISING, bouncetime=200)
     GPIO.add_event_detect(6, GPIO.RISING)
 
 
@@ -21,15 +21,13 @@ def loop():
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
         if GPIO.event_detected(5):
             currenttime = time.time()
-            while GPIO.input(5) == GPIO.HIGH:
-                print('Pin 5 high | Pin 6 low')
-                if GPIO.event_detected(6):
-                    print('Pin 5 &6  high')
-
-                    GPIO.wait_for_edge(5, GPIO.FALLING)
-                    print('Pin 5 low | Pin 6 high')
-                    GPIO.wait_for_edge(6, GPIO.FALLING)
-                    print('Both pins low')
+            print('Pin 5 high | Pin 6 low')
+            GPIO.wait_for_edge(6, GPIO.RISING, bouncetime=200)
+            print('Pin 5 &6  high')
+            GPIO.wait_for_edge(5, GPIO.FALLING, bouncetime=200)
+            print('Pin 5 low | Pin 6 high')
+            GPIO.wait_for_edge(6, GPIO.FALLING, bouncetime=200)
+            print('Both pins low')
 
             count = count + 1
             rotationtime = time.time() - currenttime
