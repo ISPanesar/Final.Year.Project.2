@@ -25,6 +25,7 @@ def loop():
             count = count + 1
             rotationtime = time.time() - currenttime
             print('The count is %s' % count)
+            time.sleep(0.01)
         elif time.time() - currenttime > 60:
             RPM = count/(time.time()-currenttime)*60/2
             print(str(RPM))
@@ -32,6 +33,7 @@ def loop():
             count = 0
         else:
             print('Clear')
+            time.sleep(0.01)
         # print('The count is %s, the step time is %s ' % (count, rotationtime))
 
 def destroy():
