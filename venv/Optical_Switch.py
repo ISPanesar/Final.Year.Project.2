@@ -8,6 +8,7 @@ def setup():
     GPIO.setup(5, GPIO.IN) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN)
     GPIO.add_event_detect(5, GPIO.RISING)
+    GPIO.add_event_detect(6, GPIO.RISING)
 
 
 
@@ -20,17 +21,16 @@ def loop():
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
         if GPIO.event_detected(5):
             currenttime = time.time()
-            print('Pin 5 high | Pin 6 low')
-            time.sleep(0.1)
-            GPIO.wait_for_edge(6, GPIO.RISING)
-            print('Pin 5 &6  high')
-            time.sleep(0.1)
-            GPIO.wait_for_edge(5, GPIO.FALLING)
-            print('Pin 5 low | Pin 6 high')
-            time.sleep(0.1)
-            GPIO.wait_for_edge(6, GPIO.FALLING)
-            print('Both pins low')
-            time.sleep(0.1)
+            while GPIO.input(5) == GPIO.HIGH:
+                print('Pin 5 high | Pin 6 low')
+                if GPIO.event_detected(6):
+                    print('Pin 5 &6  high')
+
+                    GPIO.wait_for_edge(5, GPIO.FALLING)
+                    print('Pin 5 low | Pin 6 high')
+                    GPIO.wait_for_edge(6, GPIO.FALLING)
+                    print('Both pins low')
+
             count = count + 1
             rotationtime = time.time() - currenttime
             print('The count is %s, the step time is %s ' % (count, rotationtime))
