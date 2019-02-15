@@ -19,7 +19,7 @@ def loop():
     currenttime = time.time()
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.input(5) == HIGH and GPIO.input(6) == HIGH:
+        if GPIO.input(5) == True and GPIO.input(6) == True:
 
 
             count = count + 1
