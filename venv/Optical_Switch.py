@@ -19,10 +19,13 @@ def loop():
     currenttime = time.time()
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.input(5) == True and GPIO.input(6) == True:
+        if GPIO.input(5) == True:
+            #and GPIO.input(6) == True:
+            print('true')
+        elif GPIO.input(5) == False:
+            print('False')
 
-
-            count = count + 1
+            '''count = count + 1
             rotationtime = time.time() - currenttime
             print('The count is %s' % count)
             time.sleep(0.01)
@@ -35,7 +38,7 @@ def loop():
             print('Clear')
             time.sleep(0.01)
         # print('The count is %s, the step time is %s ' % (count, rotationtime))
-
+'''
 def destroy():
     GPIO.cleanup() # Release resource
 
