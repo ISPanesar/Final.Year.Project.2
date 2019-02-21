@@ -15,7 +15,7 @@ if __name__ == '__main__': # Set the Program start from here
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
     GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(5, GPIO.FALLING)
+    GPIO.add_event_detect(5, GPIO.FALLING, bouncetime=20)
     GPIO.add_event_detect(6, GPIO.FALLING, bouncetime = 20)
     try:
         global count
@@ -28,7 +28,8 @@ if __name__ == '__main__': # Set the Program start from here
                 # and GPIO.input(6) == True:
                 print('event detected')
                 #time.sleep(0.05)
-                input('press enter to continue')
+                GPIO.wait_for_edge(6, GPIO.FALLING)
+                print('event 2 detected')
             # if GPIO.input(5) == False:
             #   print('False')
             else:
