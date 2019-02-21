@@ -7,8 +7,8 @@ def setup():
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
     GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(5, GPIO.FALLING, bouncetime = 200)
-    GPIO.add_event_detect(6, GPIO.FALLING, bouncetime = 200)
+    GPIO.add_event_detect(5, GPIO.FALLING, bouncetime = 20)
+    GPIO.add_event_detect(6, GPIO.FALLING, bouncetime = 20)
 
 
 
@@ -19,11 +19,11 @@ def loop():
     currenttime = time.time()
     while True:
         """and (GPIO.input(5) == False)) or\((GPIO.input(6) == False) and (GPIO.input(5) == True))"""
-        if GPIO.input(5) == True:
+        if GPIO.event_detected(5):
             #and GPIO.input(6) == True:
-            print('true')
-        elif GPIO.input(5) == False:
-            print('False')
+            print('event detected')
+        #if GPIO.input(5) == False:
+         #   print('False')
         else:
             print('Python hates me')
             '''count = count + 1
