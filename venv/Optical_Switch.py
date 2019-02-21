@@ -27,7 +27,7 @@ if __name__ == '__main__': # Set the Program start from here
             if GPIO.event_detected(5):
                 # and GPIO.input(6) == True:
                 print('event detected')
-                time.sleep(0.001)
+                time.sleep(0.005)
             # if GPIO.input(5) == False:
             #   print('False')
             else:
