@@ -5,7 +5,7 @@ import time
 
 
 
-def loop():
+
 
 def destroy():
     GPIO.cleanup() # Release resource
