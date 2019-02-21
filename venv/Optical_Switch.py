@@ -15,7 +15,7 @@ if __name__ == '__main__': # Set the Program start from here
     GPIO.setmode(GPIO.BCM) # Set GPIO as PIN Numbers
     GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Set pull up to high level(3.3V)
     GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(5, GPIO.RISING)
+    GPIO.add_event_detect(5, GPIO.FALLING)
     GPIO.add_event_detect(6, GPIO.FALLING, bouncetime = 20)
     try:
         global count
