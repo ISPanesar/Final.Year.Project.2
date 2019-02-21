@@ -24,7 +24,8 @@ def loop():
             print('true')
         elif GPIO.input(5) == False:
             print('False')
-
+        else:
+            print('Python hates me')
             '''count = count + 1
             rotationtime = time.time() - currenttime
             print('The count is %s' % count)
