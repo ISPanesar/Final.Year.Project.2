@@ -22,6 +22,7 @@ def loop():
         if GPIO.event_detected(5):
             #and GPIO.input(6) == True:
             print('event detected')
+            destroy()
         #if GPIO.input(5) == False:
          #   print('False')
         else:
