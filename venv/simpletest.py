@@ -296,11 +296,6 @@ while True:
     along the track the syringe has moved and outputs the raw data along 
     with the number of steps"""
     if count != c:
-        if GPIO.event_detected(5):
-            counts = count + 1
-        if (time.time() - starttime) > 5:
-            RPM = count / (time.time() - starttime)
-            starttime = time.time()
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
@@ -311,6 +306,11 @@ while True:
     # Pause for 0.3 of a second.
     """90 is the limit of the track so the system moves to the end of the track 
     before reversing 1500 is the start of the track """
+    if GPIO.event_detected(5):
+        counts = count + 1
+    if (time.time() - starttime) > 5:
+        RPM = count / (time.time() - starttime)
+        starttime = time.time()
     if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
