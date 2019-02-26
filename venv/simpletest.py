@@ -306,21 +306,22 @@ while True:
     # Pause for 0.3 of a second.
     """90 is the limit of the track so the system moves to the end of the track 
     before reversing 1500 is the start of the track """
-    if GPIO.event_detected(5):
-        counts = counts + 1
-    if (time.time() - starttime) > 5:
-        RPM = counts / (time.time() - starttime)
-        starttime = time.time()
+
     if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         print('Reversing')
     elif values > 1500:
-        GPIO.output(motoRPin1, GPIO.LOW)
+        GPIO.output(motoRPin1, GPIO.HIGH)
         GPIO.output(motoRPin2, GPIO.LOW)
-        print('stopping')
-        GPIO.cleanup()
-        exit()
+        print('Forward')
+    else:
+        if GPIO.event_detected(5):
+            counts = counts + 1
+        if (time.time() - starttime) > 5:
+            RPM = counts / (time.time() - starttime)
+            starttime = time.time()
+
         """Please note that the Force and length of the track needs to be 
         calibrated to be used with this program apply a known force to the 
         load cell and use this to calibrate the raw data, use a set of calipers
