@@ -281,18 +281,14 @@ count = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
-p = GPIO.PWM(enablePin, 1000)
-p.start(100)
-GPIO.output(motoRPin1, GPIO.HIGH)
-GPIO.output(motoRPin2, GPIO.LOW)
 while True:
-    if GPIO.event_detected(5):
+    '''if GPIO.event_detected(5):
         GPIO.wait_for_edge(6, GPIO.FALLING, timeout=200)
         counts = count + 1
     if (time.time() - starttime) > 5:
         RPM = count/(time.time() - starttime)
         starttime = time.time()
-
+'''
     # Read the ADC channel values in a list.
     values = adc.read_adc(0, gain=GAIN)
     count, mode, reading = s.get_reading()
