@@ -283,7 +283,7 @@ count = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
-time.sleep(0.1)
+time.sleep(0.5)
 while True:
     if GPIO.event_detected(5):
         GPIO.wait_for_edge(6, GPIO.FALLING, timeout=20)
