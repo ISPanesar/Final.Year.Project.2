@@ -233,8 +233,7 @@ GPIO.setup(motoRPin1, GPIO.OUT)
 GPIO.setup(motoRPin2, GPIO.OUT)
 GPIO.setup(enablePin, GPIO.OUT)
 
-p = GPIO.PWM(enablePin, 1000)
-p.start(100)
+
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(6, GPIO.FALLING)
 GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
@@ -261,6 +260,8 @@ adc = ADS1x15.ADS1015()
 GAIN = 1
 GPIO.output(motoRPin1, GPIO.HIGH)
 GPIO.output(motoRPin2, GPIO.LOW)
+p = GPIO.PWM(enablePin, 1000)
+p.start(100)
 print('Reading ADS1x15 values, press Ctrl-C to quit...')
 # Print nice channel column headers.
 print('-' * 37)
