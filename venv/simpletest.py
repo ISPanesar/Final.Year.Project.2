@@ -232,12 +232,14 @@ enablePin = 22
 GPIO.setup(motoRPin1, GPIO.OUT)
 GPIO.setup(motoRPin2, GPIO.OUT)
 GPIO.setup(enablePin, GPIO.OUT)
+
+p = GPIO.PWM(enablePin, 1000)
+p.start(100)
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
 GPIO.add_event_detect(5, GPIO.FALLING, bouncetime=20)
-p = GPIO.PWM(enablePin, 1000)
-p.start(100)
+
 
 # Create an ADS1015 ADC (12-bit) instance.
 adc = ADS1x15.ADS1015()
