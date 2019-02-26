@@ -235,6 +235,7 @@ GPIO.setup(enablePin, GPIO.OUT)
 
 
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(6, GPIO.FALLING)
 GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
 GPIO.add_event_detect(5, GPIO.FALLING)
@@ -280,7 +281,7 @@ stop = time.time() + 3600
 # This sets the column headings
 print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
 
-counts = 0
+count = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
@@ -295,6 +296,11 @@ while True:
     along the track the syringe has moved and outputs the raw data along 
     with the number of steps"""
     if count != c:
+        if GPIO.event_detected(5):
+            counts = count + 1
+        if (time.time() - starttime) > 5:
+            RPM = count / (time.time() - starttime)
+            starttime = time.time()
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
@@ -305,22 +311,16 @@ while True:
     # Pause for 0.3 of a second.
     """90 is the limit of the track so the system moves to the end of the track 
     before reversing 1500 is the start of the track """
-
     if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
         GPIO.output(motoRPin1, GPIO.LOW)
         print('Reversing')
     elif values > 1500:
-        GPIO.output(motoRPin1, GPIO.HIGH)
+        GPIO.output(motoRPin1, GPIO.LOW)
         GPIO.output(motoRPin2, GPIO.LOW)
-        print('Forward')
-    else:
-        GPIO.wait_for_edge(6, GPIO.FALLING)
-        counts = counts + 1
-        if (time.time() - starttime) > 5:
-            RPM = counts / (time.time() - starttime)
-            starttime = time.time()
-
+        print('stopping')
+        GPIO.cleanup()
+        exit()
         """Please note that the Force and length of the track needs to be 
         calibrated to be used with this program apply a known force to the 
         load cell and use this to calibrate the raw data, use a set of calipers
