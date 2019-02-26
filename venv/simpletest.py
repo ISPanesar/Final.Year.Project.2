@@ -285,7 +285,7 @@ count = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
-time.sleep(5)
+
 while True:
     if GPIO.event_detected(5) and GPIO.event_detected(6):
         counts = count + 1
