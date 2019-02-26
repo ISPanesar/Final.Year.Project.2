@@ -281,7 +281,7 @@ stop = time.time() + 3600
 # This sets the column headings
 print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
 
-count = 0
+counts = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
@@ -307,9 +307,9 @@ while True:
     """90 is the limit of the track so the system moves to the end of the track 
     before reversing 1500 is the start of the track """
     if GPIO.event_detected(5):
-        counts = count + 1
+        counts = counts + 1
     if (time.time() - starttime) > 5:
-        RPM = count / (time.time() - starttime)
+        RPM = counts / (time.time() - starttime)
         starttime = time.time()
     if values < 90:
         GPIO.output(motoRPin2, GPIO.HIGH)
