@@ -233,6 +233,9 @@ GPIO.setup(motoRPin1, GPIO.OUT)
 GPIO.setup(motoRPin2, GPIO.OUT)
 GPIO.setup(enablePin, GPIO.OUT)
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
+GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
+GPIO.add_event_detect(5, GPIO.FALLING, bouncetime=20)
 p = GPIO.PWM(enablePin, 1000)
 p.start(100)
 
@@ -279,12 +282,12 @@ rotationtime = 0
 starttime = time.time()
 RPM = 0
 while True:
-    if GPIO.input(6) == False:
+    if GPIO.event_detected(5):
         time.sleep(0.01)
-        if GPIO.input(6) == True:
-            count = count + 1
-    if (time.time() - starttime) == 5:
-        RPM = count/5
+        GPIO.wait_for_edge(6, GPIO.FALLING)
+        counts = count + 1
+    if (time.time() - starttime) > 5:
+        RPM = count/(time.time() - starttime)
         starttime = time.time()
 
     # Read the ADC channel values in a list.
