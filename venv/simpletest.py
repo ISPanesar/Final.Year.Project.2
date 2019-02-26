@@ -287,8 +287,8 @@ starttime = time.time()
 RPM = 0
 
 while True:
-    if GPIO.event_detected(5):
-        counts = count + 1
+    #if GPIO.event_detected(5):
+    #    counts = count + 1
     #if (time.time() - starttime) > 5:
     #    RPM = count/(time.time() - starttime)
     #    starttime = time.time()
