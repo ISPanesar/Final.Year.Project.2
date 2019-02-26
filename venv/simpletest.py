@@ -236,6 +236,7 @@ GPIO.setup(enablePin, GPIO.OUT)
 p = GPIO.PWM(enablePin, 1000)
 p.start(100)
 GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(6, GPIO.FALLING, bouncetime=10)
 GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
 GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
 GPIO.add_event_detect(5, GPIO.FALLING, bouncetime=10)
@@ -285,8 +286,7 @@ starttime = time.time()
 RPM = 0
 time.sleep(0.5)
 while True:
-    if GPIO.event_detected(5):
-        GPIO.wait_for_edge(6, GPIO.FALLING, timeout=20)
+    if GPIO.event_detected(5) and GPIO.event_detected(6):
         counts = count + 1
     if (time.time() - starttime) > 5:
         RPM = count/(time.time() - starttime)
