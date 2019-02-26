@@ -285,8 +285,32 @@ print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |
 
 count = 0
 rotationtime = 0
+global starttime
 starttime = time.time()
 RPM = 0
+
+class motor_control:
+    def rpm_measurements(self):
+        if GPIO.event_detected(5):
+            global counts
+            counts = counts + 1
+        if (time.time() - starttime) > 5:
+            RPM = count / (time.time() - starttime)
+            starttime = time.time()
+    def motor_start(self, PWM, freq, direction):
+        p.start(PWM)
+        p.GPIO.PWM(enablePin, freq)
+        if direction == 1:
+            GPIO.output(motoRPin1, GPIO.HIGH)
+            GPIO.output(motoRPin2, GPIO.LOW)
+            print('motor starting, moving forwards')
+        elif direction == 0:
+            GPIO.output(motoRPin2, GPIO.HIGH)
+            GPIO.output(motoRPin1, GPIO.LOW)
+            print('motor starting, moving backwards')
+        else:
+            print('motor has not been correctly started, you need the PWM on time 0-100, clockrate in Hz and directionality 1 is forwards and 0 is backwards')
+
 
 while True:
 
@@ -298,11 +322,6 @@ while True:
     along the track the syringe has moved and outputs the raw data along 
     with the number of steps"""
     if count != c:
-        if GPIO.event_detected(5):
-            counts = count + 1
-        if (time.time() - starttime) > 5:
-            RPM = count / (time.time() - starttime)
-            starttime = time.time()
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
