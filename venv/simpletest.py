@@ -281,6 +281,10 @@ count = 0
 rotationtime = 0
 starttime = time.time()
 RPM = 0
+p = GPIO.PWM(enablePin, 1000)
+p.start(100)
+GPIO.output(motoRPin1, GPIO.HIGH)
+GPIO.output(motoRPin2, GPIO.LOW)
 while True:
     if GPIO.event_detected(5):
         GPIO.wait_for_edge(6, GPIO.FALLING, timeout=200)
