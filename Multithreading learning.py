@@ -8,6 +8,7 @@ import ADS1x15
 import pigpio  # http://abyz.co.uk/rpi/pigpio/python.html
 import HX711
 import threading
+import queue
 
 
 def ampsetup():
@@ -234,6 +235,7 @@ def motorsetup():
     # This is used to set the GPIO's needed for the L293D motor driver and start PWM
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(18, GPIO.OUT)
+    global motoRPin1, motoRPin2, enablePin
     motoRPin1 = 27
     motoRPin2 = 17
     enablePin = 22
@@ -247,6 +249,7 @@ def motorsetup():
     GPIO.add_event_detect(5, GPIO.FALLING)
     print('motor setting up... ')
     time.sleep(1)
+
 
 def adcsetup():
     # Create an ADS1015 ADC (12-bit) instance.
@@ -294,22 +297,23 @@ def initialise():
     stop = time.time() + 3600
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-
+    global starttime, count, RPM
     count = 0
     rotationtime = 0
-    global starttime
+
     starttime = time.time()
     RPM = 0
 
+
 class motor_control:
-    def rpm_measurements(self):
+    def rpm_measurements(self, count):
         if GPIO.event_detected(5):
             global counts
             counts = counts + 1
         if (time.time() - starttime) > 5:
-            global RPM
             RPM = count / (time.time() - starttime)
             starttime = time.time()
+            return RPM
     def motor_start(self, PWM, freq, direction):
         p.start(PWM)
         p.GPIO.PWM(enablePin, freq)
@@ -327,25 +331,31 @@ class motor_control:
 
 def loop():
     while True:
+        que = queue.Queue()
+        que2 = queue.Queue()
         # Read the ADC channel values in a list.
-        values = threading.Thread(target=adc.read_adc(0, gain=GAIN))
-        threads.append(values)
-        values.start()
-
+        t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
+        t.start()
+        t.join()
+        while not que.empty():
+            values = que.get()
 
         count, mode, reading = s.get_reading()
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        t = threading.Thread(target=motor_control.rpm_measurements())
-        threads.append(t)
-        t.start()
+        mcr = threading.Thread(target=lambda q, arg1: q.put(motor_control.rpm_measurements(count)), args=(que2, 1))
+        mcr.start()
+        mcr.join()
+        while not que2.empty():
+            RPM = que2.get()
+
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
             length = 110 - (((int(values) - 90) / 1406) * 110)
-            print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
-                                                                     str(round(Force, 5)) + "N", str(count),
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                     str(round(Force, 5)) + "N",
                                                                      str(round(RPM, 0)), mode, reading, values))
 
         """90 is the limit of the track so the system moves to the end of the track 
@@ -365,6 +375,7 @@ def loop():
             load cell and use this to calibrate the raw data, use a set of calipers
             to determine the length of the track and use the program to see the
             raw data limitations for the hardware"""
+
 
 if __name__ == '__main__':
     ampsetup()
