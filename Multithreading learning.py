@@ -9,24 +9,29 @@ import pigpio  # http://abyz.co.uk/rpi/pigpio/python.html
 import HX711
 import threading
 
-# This sets the value assigned to each gain
-CH_A_GAIN_64  = 0
-CH_A_GAIN_128 = 1
-CH_B_GAIN_32  = 2
 
-# This sets the clocking rate
-DATA_CLKS = 24
-X_128_CLK = 25
-X_32_CLK  = 26
-X_64_CLK  = 27
+def ampsetup():
+    # This sets the value assigned to each gain
+    CH_A_GAIN_64  = 0
+    CH_A_GAIN_128 = 1
+    CH_B_GAIN_32  = 2
 
-# This sets the pulse length and the timeout limit
-PULSE_LEN = 15
-TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
-SETTLE_READINGS = 5
+    # This sets the clocking rate
+    DATA_CLKS = 24
+    X_128_CLK = 25
+    X_32_CLK  = 26
+    X_64_CLK  = 27
 
+    # This sets the pulse length and the timeout limit
+    PULSE_LEN = 15
+    TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
+    SETTLE_READINGS = 5
+    print('amp setting up...')
+    time.sleep(1)
 
 # This is the class for the HX711 sensor module
+
+
 class sensor:
     """
     A class to read the HX711 24-bit ADC.
@@ -225,69 +230,76 @@ class sensor:
             self._previous_edge_long = current_edge_long
 
 
-# This is used to set the GPIO's needed for the L293D motor driver and start PWM
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
-motoRPin1 = 27
-motoRPin2 = 17
-enablePin = 22
-GPIO.setup(motoRPin1, GPIO.OUT)
-GPIO.setup(motoRPin2, GPIO.OUT)
-GPIO.setup(enablePin, GPIO.OUT)
+def motorsetup():
+    # This is used to set the GPIO's needed for the L293D motor driver and start PWM
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(18, GPIO.OUT)
+    motoRPin1 = 27
+    motoRPin2 = 17
+    enablePin = 22
+    GPIO.setup(motoRPin1, GPIO.OUT)
+    GPIO.setup(motoRPin2, GPIO.OUT)
+    GPIO.setup(enablePin, GPIO.OUT)
+    GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(6, GPIO.FALLING)
+    GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
+    GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
+    GPIO.add_event_detect(5, GPIO.FALLING)
+    print('motor setting up... ')
+    time.sleep(1)
+
+def adcsetup():
+    # Create an ADS1015 ADC (12-bit) instance.
+    global adc
+    adc = ADS1x15.ADS1015()
+
+    # Note you can change the I2C address from its default (0x48), and/or the I2C
+    # bus by passing in these optional parameters:
+    # adc = Adafruit_ADS1x15.ADS1015(address=0x49, busnum=1)
+
+    # Choose a gain of 1 for reading voltages from 0 to 4.09V.
+    # Or pick a different gain to change the range of voltages that are read:
+    #  - 2/3 = +/-6.144V
+    #  -   1 = +/-4.096V
+    #  -   2 = +/-2.048V
+    #  -   4 = +/-1.024V
+    #  -   8 = +/-0.512V
+    #  -  16 = +/-0.256V
+    # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
+    global GAIN
+    GAIN = 1
+    print('adc setting up...')
+    time.sleep(1)
 
 
-GPIO.setup(6, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(6, GPIO.FALLING)
-GPIO.setmode(GPIO.BCM)  # Set GPIO as PIN Numbers
-GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
-GPIO.add_event_detect(5, GPIO.FALLING)
+def initialise():
+    '''GPIO.output(motoRPin1, GPIO.HIGH)
+    GPIO.output(motoRPin2, GPIO.LOW)
+    p = GPIO.PWM(enablePin, 1000)
+    p.start(100)'''
+    print('Reading ADS1x15 values, press Ctrl-C to quit...')
+    # Print nice channel column headers.
+    print('-' * 37)
+    # Main loop.
+    # This is used to pull data from the load cell
+    pi = pigpio.pi()
+    if not pi.connected:
+        exit(0)
+    s = HX711.sensor(
+        pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
+    s.set_mode(HX711.CH_A_GAIN_64)
+    c, mode, reading = s.get_reading()
 
-# Create an ADS1015 ADC (12-bit) instance.
-adc = ADS1x15.ADS1015()
+    stop = time.time() + 3600
+    # This sets the column headings
+    print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
 
-# Note you can change the I2C address from its default (0x48), and/or the I2C
-# bus by passing in these optional parameters:
-# adc = Adafruit_ADS1x15.ADS1015(address=0x49, busnum=1)
-
-# Choose a gain of 1 for reading voltages from 0 to 4.09V.
-# Or pick a different gain to change the range of voltages that are read:
-#  - 2/3 = +/-6.144V
-#  -   1 = +/-4.096V
-#  -   2 = +/-2.048V
-#  -   4 = +/-1.024V
-#  -   8 = +/-0.512V
-#  -  16 = +/-0.256V
-# See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
-GAIN = 1
-GPIO.output(motoRPin1, GPIO.HIGH)
-GPIO.output(motoRPin2, GPIO.LOW)
-p = GPIO.PWM(enablePin, 1000)
-p.start(100)
-print('Reading ADS1x15 values, press Ctrl-C to quit...')
-# Print nice channel column headers.
-print('-' * 37)
-# Main loop.
-# This is used to pull data from the load cell
-pi = pigpio.pi()
-if not pi.connected:
-    exit(0)
-
-s = HX711.sensor(
-    pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
-
-s.set_mode(HX711.CH_A_GAIN_64)
-c, mode, reading = s.get_reading()
-
-stop = time.time() + 3600
-# This sets the column headings
-print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-
-count = 0
-rotationtime = 0
-global starttime
-starttime = time.time()
-RPM = 0
+    count = 0
+    rotationtime = 0
+    global starttime
+    starttime = time.time()
+    RPM = 0
 
 class motor_control:
     def rpm_measurements(self):
@@ -295,6 +307,7 @@ class motor_control:
             global counts
             counts = counts + 1
         if (time.time() - starttime) > 5:
+            global RPM
             RPM = count / (time.time() - starttime)
             starttime = time.time()
     def motor_start(self, PWM, freq, direction):
@@ -312,38 +325,56 @@ class motor_control:
             print('motor has not been correctly started, you need the PWM on time 0-100, clockrate in Hz and directionality 1 is forwards and 0 is backwards')
 
 
-while True:
+def loop():
+    while True:
+        # Read the ADC channel values in a list.
+        values = threading.Thread(target=adc.read_adc(0, gain=GAIN))
+        threads.append(values)
+        values.start()
 
 
-    # Read the ADC channel values in a list.
-    values = adc.read_adc(0, gain=GAIN)
-    count, mode, reading = s.get_reading()
-    """ This calculates the force on the load cell, the distance
-    along the track the syringe has moved and outputs the raw data along 
-    with the number of steps"""
-    if count != c:
-        c = count
-        Force = 0.00004 * (reading - 283000)
-        length = 110 - (((values - 90 )/1406) * 110)
-        print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm", str(round(Force, 5)) + "N", str(count), str(round(RPM, 0)), mode, reading, values))
+        count, mode, reading = s.get_reading()
+        """ This calculates the force on the load cell, the distance
+        along the track the syringe has moved and outputs the raw data along 
+        with the number of steps"""
+        t = threading.Thread(target=motor_control.rpm_measurements())
+        threads.append(t)
+        t.start()
+        if count != c:
+            c = count
+            Force = 0.00004 * (reading - 283000)
+            length = 110 - (((int(values) - 90) / 1406) * 110)
+            print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                     str(round(Force, 5)) + "N", str(count),
+                                                                     str(round(RPM, 0)), mode, reading, values))
 
-    # time.sleep(0.3)
+        """90 is the limit of the track so the system moves to the end of the track 
+        before reversing 1500 is the start of the track """
+        if values < 90:
+            GPIO.output(motoRPin2, GPIO.HIGH)
+            GPIO.output(motoRPin1, GPIO.LOW)
+            print('Reversing')
+        elif values > 1500:
+            GPIO.output(motoRPin1, GPIO.LOW)
+            GPIO.output(motoRPin2, GPIO.LOW)
+            print('stopping')
+            GPIO.cleanup()
+            exit()
+            """Please note that the Force and length of the track needs to be 
+            calibrated to be used with this program apply a known force to the 
+            load cell and use this to calibrate the raw data, use a set of calipers
+            to determine the length of the track and use the program to see the
+            raw data limitations for the hardware"""
 
-    # Pause for 0.3 of a second.
-    """90 is the limit of the track so the system moves to the end of the track 
-    before reversing 1500 is the start of the track """
-    if values < 90:
-        GPIO.output(motoRPin2, GPIO.HIGH)
-        GPIO.output(motoRPin1, GPIO.LOW)
-        print('Reversing')
-    elif values > 1500:
-        GPIO.output(motoRPin1, GPIO.LOW)
-        GPIO.output(motoRPin2, GPIO.LOW)
-        print('stopping')
-        GPIO.cleanup()
-        exit()
-        """Please note that the Force and length of the track needs to be 
-        calibrated to be used with this program apply a known force to the 
-        load cell and use this to calibrate the raw data, use a set of calipers
-        to determine the length of the track and use the program to see the
-        raw data limitations for the hardware"""
+if __name__ == '__main__':
+    ampsetup()
+    motorsetup()
+    adcsetup()
+    initialise()
+    motor_control.motor_start(100, 1000, 1)
+    try:
+        loop()
+    except KeyboardInterrupt:
+        GPIO.cleanup
+
+
