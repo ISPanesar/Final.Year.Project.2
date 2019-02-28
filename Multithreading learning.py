@@ -290,9 +290,7 @@ def initialise(c):
     rotationtime = 0
     global starttime
     starttime = time.time()
-    pi = pigpio.pi()
-    if not pi.connected:
-        exit(0)
+
 
     RPM = 0
     return c, pi
@@ -321,7 +319,10 @@ class motor_control:
             print('motor has not been correctly started, you need the PWM on time 0-100, clockrate in Hz and directionality 1 is forwards and 0 is backwards')
 
 
-def loop(pi):
+def loop():
+    pi = pigpio.pi()
+    if not pi.connected:
+        exit(0)
     while True:
         que = queue.Queue()
         que2 = queue.Queue()
@@ -379,7 +380,7 @@ if __name__ == '__main__':
     initialise(0)
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
-        loop(pigpio.pi())
+        loop()
     except KeyboardInterrupt:
         GPIO.cleanup
 
