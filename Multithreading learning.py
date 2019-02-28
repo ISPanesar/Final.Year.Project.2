@@ -283,17 +283,7 @@ def initialise(c):
     print('-' * 37)
     # Main loop.
     # This is used to pull data from the load cell
-    pi = pigpio.pi()
-    if not pi.connected:
-        exit(0)
-    global s, mode, reading
-    s = HX711.sensor(
-        pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
-    s.set_mode(HX711.CH_A_GAIN_64)
-    c, mode, reading = s.get_reading()
-
-    stop = time.time() + 3600
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
     global starttime, count, RPM
@@ -338,7 +328,15 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
+        pi = pigpio.pi()
+        if not pi.connected:
+            exit(0)
+        s = HX711.sensor(
+            pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
+        s.set_mode(HX711.CH_A_GAIN_64)
+        c, mode, reading = s.get_reading()
+        stop = time.time() + 3600
         count, mode, reading = s.get_reading()
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
