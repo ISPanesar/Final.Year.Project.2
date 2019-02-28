@@ -287,6 +287,7 @@ def initialise(c):
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
     global count, RPM
     count = 0
+    RPM = 0
     rotationtime = 0
     global starttime
     starttime = time.time()
