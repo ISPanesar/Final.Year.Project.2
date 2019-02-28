@@ -14,7 +14,8 @@ import queue
 
 
 # This is the class for the HX711 sensor module
-
+global c
+c = 0
 
 class sensor:
     # This sets the value assigned to each gain
@@ -287,8 +288,7 @@ def initialise():
     pi = pigpio.pi()
     if not pi.connected:
         exit(0)
-    global s, c, mode, reading
-    c = 0
+    global s, mode, reading
     s = HX711.sensor(
         pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
@@ -350,7 +350,6 @@ def loop():
         mcr.join()
         while not que2.empty():
             RPM = que2.get()
-        nonlocal c
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
