@@ -307,8 +307,7 @@ class motor_control:
             starttime = time.time()
             return RPM
         else:
-            RPM = 0
-            return RPM
+            return
 
     def motor_start(self, PWM, freq, direction):
         p = GPIO.PWM(enablePin, freq)
@@ -353,7 +352,10 @@ def loop():
         mcr.start()
         mcr.join()
         while not que2.empty():
-            RPM = que2.get()
+            rpm = que2.get()
+            if rpm is None:
+                RPM = rpm
+
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
