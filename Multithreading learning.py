@@ -11,30 +11,31 @@ import threading
 import queue
 
 
-def ampsetup():
-    # This sets the value assigned to each gain
-    global CH_A_GAIN_64, CH_A_GAIN_128, CH_B_GAIN_32, DATA_CLKS, X_32_CLK, X_64_CLK, X_128_CLK, PULSE_LEN, TIMEOUT, SETTLE_READINGS
-    CH_A_GAIN_64  = 0
-    CH_A_GAIN_128 = 1
-    CH_B_GAIN_32  = 2
 
-    # This sets the clocking rate
-    DATA_CLKS = 24
-    X_128_CLK = 25
-    X_32_CLK  = 26
-    X_64_CLK  = 27
-
-    # This sets the pulse length and the timeout limit
-    PULSE_LEN = 15
-    TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
-    SETTLE_READINGS = 5
-    print('amp setting up...')
-    time.sleep(1)
 
 # This is the class for the HX711 sensor module
 
 
 class sensor:
+    def ampsetup():
+        # This sets the value assigned to each gain
+        global CH_A_GAIN_64, CH_A_GAIN_128, CH_B_GAIN_32, DATA_CLKS, X_32_CLK, X_64_CLK, X_128_CLK, PULSE_LEN, TIMEOUT, SETTLE_READINGS
+        CH_A_GAIN_64 = 0
+        CH_A_GAIN_128 = 1
+        CH_B_GAIN_32 = 2
+
+        # This sets the clocking rate
+        DATA_CLKS = 24
+        X_128_CLK = 25
+        X_32_CLK = 26
+        X_64_CLK = 27
+
+        # This sets the pulse length and the timeout limit
+        PULSE_LEN = 15
+        TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
+        SETTLE_READINGS = 5
+        print('amp setting up...')
+        time.sleep(1)
     """
     A class to read the HX711 24-bit ADC.
     """
@@ -379,7 +380,7 @@ def loop():
 
 
 if __name__ == '__main__':
-    ampsetup()
+    sensor.ampsetup()
     motorsetup()
     adcsetup()
     initialise()
