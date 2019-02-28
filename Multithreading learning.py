@@ -13,7 +13,7 @@ import queue
 
 def ampsetup():
     # This sets the value assigned to each gain
-    global CH_A_GAIN_64
+    global CH_A_GAIN_64, CH_A_GAIN_128, CH_B_GAIN_32, DATA_CLKS, X_32_CLK, X_64_CLK, X_128_CLK, PULSE_LEN, TIMEOUT, SETTLE_READINGS
     CH_A_GAIN_64  = 0
     CH_A_GAIN_128 = 1
     CH_B_GAIN_32  = 2
