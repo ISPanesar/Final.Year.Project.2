@@ -236,7 +236,7 @@ def motorsetup():
     global motoRPin1, motoRPin2, enablePin
     motoRPin1 = 27
     motoRPin2 = 17
-    enablePin = 18
+    enablePin = 22
     GPIO.setup(motoRPin1, GPIO.OUT)
     GPIO.setup(motoRPin2, GPIO.OUT)
     GPIO.setup(enablePin, GPIO.OUT)

@@ -298,11 +298,11 @@ while True:
     along the track the syringe has moved and outputs the raw data along 
     with the number of steps"""
     if count != c:
-        if GPIO.event_detected(5):
+        '''if GPIO.event_detected(5):
             counts = count + 1
         if (time.time() - starttime) > 5:
             RPM = count / (time.time() - starttime)
-            starttime = time.time()
+            starttime = time.time()'''
         c = count
         Force = 0.00004 * (reading - 283000)
         length = 110 - (((values - 90 )/1406) * 110)
