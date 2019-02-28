@@ -323,6 +323,7 @@ def loop():
     pi = pigpio.pi()
     if not pi.connected:
         exit(0)
+        global s
         s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
         s.set_mode(HX711.CH_A_GAIN_64)
@@ -336,7 +337,6 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
-            nonlocal s
             count, mode, reading = s.get_reading()
 
 
