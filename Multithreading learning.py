@@ -246,7 +246,7 @@ def motorsetup():
     GPIO.setup(5, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Set pull up to high level(3.3V)
     GPIO.add_event_detect(5, GPIO.FALLING)
     print('motor setting up... ')
-    time.sleep(1)
+
 
 
 def adcsetup():
@@ -270,7 +270,6 @@ def adcsetup():
     global GAIN
     GAIN = 1
     print('adc setting up...')
-    time.sleep(1)
 
 
 def initialise(c):
