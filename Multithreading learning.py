@@ -286,7 +286,7 @@ def initialise(c):
 
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-    global starttime, count, RPM
+    global count, RPM
     count = 0
     rotationtime = 0
 
@@ -377,6 +377,7 @@ if __name__ == '__main__':
     motorsetup()
     adcsetup()
     initialise(0)
+    global starttime
     starttime = time.time()
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
