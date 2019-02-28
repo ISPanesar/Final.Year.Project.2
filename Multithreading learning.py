@@ -296,6 +296,7 @@ def initialise(c):
     RPM = 0
     return c
 
+
 class motor_control:
     def rpm_measurements(self, count, starttime):
         if GPIO.event_detected(5):
@@ -305,6 +306,10 @@ class motor_control:
             RPM = count / (time.time() - starttime)
             starttime = time.time()
             return RPM
+        else:
+            RPM = 0
+            return RPM
+
     def motor_start(self, PWM, freq, direction):
         p = GPIO.PWM(enablePin, freq)
         p.start(PWM)
