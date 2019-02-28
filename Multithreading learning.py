@@ -170,7 +170,7 @@ class sensor:
             self.pi.wave_delete(self._wid)
             self._wid = None
 
-    def _callback(self, gpio, level, tick):
+    def _callback(self, gpio, level, tick, current_edge_long):
 
         if gpio == self.CLOCK:
 
