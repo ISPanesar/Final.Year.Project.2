@@ -323,6 +323,10 @@ def loop():
     pi = pigpio.pi()
     if not pi.connected:
         exit(0)
+        s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
+
+        s.set_mode(HX711.CH_A_GAIN_64)
+        c, mode, reading = s.get_reading()
     while True:
         que = queue.Queue()
         que2 = queue.Queue()
@@ -332,14 +336,8 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
-            s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
+            count, mode, reading = s.get_reading()
 
-        s.set_mode(HX711.CH_A_GAIN_64)
-        c, mode, reading = s.get_reading()
-        global stop
-        stop = time.time() + 3600
-        time.sleep(1)
-        count, mode, reading = s.get_reading()
 
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
