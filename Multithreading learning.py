@@ -380,7 +380,7 @@ if __name__ == '__main__':
     motorsetup()
     adcsetup()
     initialise()
-    motor_control.motor_start(100, 1000, 1)
+    motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
         loop()
     except KeyboardInterrupt:
