@@ -310,9 +310,9 @@ class motor_control:
         else:
             return
 
-    def motor_start(self, PWM, freq, direction):
+    def motor_start(self, pwm, freq, direction):
         p = GPIO.PWM(enablePin, freq)
-        p.start(PWM)
+        p.start(pwm)
         if direction == 1:
             GPIO.output(motoRPin1, GPIO.HIGH)
             GPIO.output(motoRPin2, GPIO.LOW)
