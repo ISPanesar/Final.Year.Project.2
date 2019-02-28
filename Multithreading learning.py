@@ -293,7 +293,7 @@ def initialise(c):
 
 
     RPM = 0
-    return c, pi
+    return c
 
 class motor_control:
     def rpm_measurements(self, count, starttime):
