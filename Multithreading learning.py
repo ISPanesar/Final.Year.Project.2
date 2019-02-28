@@ -336,6 +336,7 @@ def loop():
 
         s.set_mode(HX711.CH_A_GAIN_64)
         c, mode, reading = s.get_reading()
+        global stop
         stop = time.time() + 3600
         count, mode, reading = s.get_reading()
         """ This calculates the force on the load cell, the distance
