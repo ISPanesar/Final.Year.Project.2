@@ -287,6 +287,7 @@ def initialise():
     pi = pigpio.pi()
     if not pi.connected:
         exit(0)
+    global s
     s = HX711.sensor(
         pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
