@@ -314,8 +314,8 @@ class motor_control:
             starttime = time.time()
             return RPM
     def motor_start(self, PWM, freq, direction):
+        p = GPIO.PWM(enablePin, freq)
         p.start(PWM)
-        p.GPIO.PWM(enablePin, freq)
         if direction == 1:
             GPIO.output(motoRPin1, GPIO.HIGH)
             GPIO.output(motoRPin2, GPIO.LOW)
