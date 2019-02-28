@@ -290,7 +290,7 @@ def initialise(c):
     count = 0
     rotationtime = 0
 
-    starttime = time.time()
+
     RPM = 0
     return c
 
@@ -377,6 +377,7 @@ if __name__ == '__main__':
     motorsetup()
     adcsetup()
     initialise(0)
+    starttime = time.time()
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
         loop()
