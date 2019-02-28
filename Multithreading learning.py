@@ -288,6 +288,7 @@ def initialise():
     if not pi.connected:
         exit(0)
     global s, c, mode, reading
+    c = 0
     s = HX711.sensor(
         pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
