@@ -377,7 +377,6 @@ def loop():
 
 
 if __name__ == '__main__':
-    sensor.ampsetup()
     motorsetup()
     adcsetup()
     initialise()
