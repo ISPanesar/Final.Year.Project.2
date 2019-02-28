@@ -332,7 +332,7 @@ def loop():
     s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
     s.set_mode(HX711.CH_A_GAIN_64)
     c, mode, reading = s.get_reading()
-    motor_control.motor_start(motor_control, 100, 1000, 1)
+    motor_control.motor_start(motor_control, 100, 500, 1)
     while True:
         #que = queue.Queue()
         que2 = queue.Queue()
