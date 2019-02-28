@@ -291,10 +291,12 @@ def initialise(c):
     rotationtime = 0
     global starttime
     starttime = time.time()
-
+    pi = pigpio.pi()
+    if not pi.connected:
+        exit(0)
 
     RPM = 0
-    return c
+    return c, pi
 
 class motor_control:
     def rpm_measurements(self, count, starttime):
@@ -320,7 +322,7 @@ class motor_control:
             print('motor has not been correctly started, you need the PWM on time 0-100, clockrate in Hz and directionality 1 is forwards and 0 is backwards')
 
 
-def loop():
+def loop(pi):
     while True:
         que = queue.Queue()
         que2 = queue.Queue()
@@ -330,10 +332,7 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
-        pi = pigpio.pi()
-        if not pi.connected:
-            exit(0)
-        s = HX711.sensor(
+            s = HX711.sensor(
             pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
         s.set_mode(HX711.CH_A_GAIN_64)
@@ -381,7 +380,7 @@ if __name__ == '__main__':
     initialise(0)
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
-        loop()
+        loop(pigpio.pi())
     except KeyboardInterrupt:
         GPIO.cleanup
 
