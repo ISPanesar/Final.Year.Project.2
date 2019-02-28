@@ -350,7 +350,7 @@ def loop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(motor_control.rpm_measurements(motor_control, starttime)), args=(que2, 1))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
