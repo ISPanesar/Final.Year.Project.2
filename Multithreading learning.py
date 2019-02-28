@@ -336,6 +336,7 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
+            nonlocal s
             count, mode, reading = s.get_reading()
 
 
