@@ -332,8 +332,7 @@ def loop():
         t.join()
         while not que.empty():
             values = que.get()
-            s = HX711.sensor(
-            pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
+            s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
 
         s.set_mode(HX711.CH_A_GAIN_64)
         c, mode, reading = s.get_reading()
