@@ -14,8 +14,6 @@ import queue
 
 
 # This is the class for the HX711 sensor module
-global c
-c = 0
 
 class sensor:
     # This sets the value assigned to each gain
@@ -304,7 +302,7 @@ def initialise():
 
     starttime = time.time()
     RPM = 0
-
+    return c
 
 class motor_control:
     def rpm_measurements(self, count):
