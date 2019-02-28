@@ -327,15 +327,17 @@ def loop():
     s.set_mode(HX711.CH_A_GAIN_64)
     c, mode, reading = s.get_reading()
     while True:
-        que = queue.Queue()
+        #que = queue.Queue()
         que2 = queue.Queue()
         # Read the ADC channel values in a list.
-        t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
-        t.start()
-        t.join()
-        while not que.empty():
-            values = que.get()
-            count, mode, reading = s.get_reading()
+        #t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
+        #t.start()
+        #t.join()
+        values = adc.read_adc(0, gain=GAIN)
+        count, mode, reading = s.get_reading()
+        #while not que.empty():
+        #    values = que.get()
+        #    count, mode, reading = s.get_reading()
 
 
         """ This calculates the force on the load cell, the distance
