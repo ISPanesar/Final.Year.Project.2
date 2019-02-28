@@ -311,8 +311,8 @@ class motor_control:
             return
 
     def motor_start(self, pwm, freq, direction):
-        p = GPIO.PWM(enablePin, freq)
-        p.start(pwm)
+        self.p = GPIO.PWM(enablePin, freq)
+        self.p.start(pwm)
         if direction == 1:
             GPIO.output(motoRPin1, GPIO.HIGH)
             GPIO.output(motoRPin2, GPIO.LOW)
@@ -323,7 +323,7 @@ class motor_control:
             print('motor starting, moving backwards')
         else:
             print('motor has not been correctly started, you need the PWM on time 0-100, clockrate in Hz and directionality 1 is forwards and 0 is backwards')
-
+mc = motor_control()
 
 def loop():
     pi = pigpio.pi()
@@ -332,7 +332,7 @@ def loop():
     s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
     s.set_mode(HX711.CH_A_GAIN_64)
     c, mode, reading = s.get_reading()
-    motor_control.motor_start(motor_control, 50, 1000, 1)
+    mc.motor_start(100, 1000, 1)
     while True:
         #que = queue.Queue()
         que2 = queue.Queue()
