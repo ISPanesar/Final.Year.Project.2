@@ -285,7 +285,8 @@ def initialise(c):
 
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-    global count, RPM
+    global counts, RPM, count
+    counts = 0
     count = 0
     RPM = 0
     rotationtime = 0
