@@ -353,9 +353,10 @@ def loop():
         mcr.join()
         while not que2.empty():
             rpm = que2.get()
-            if rpm is None:
+            if rpm is not None:
                 RPM = rpm
-
+            else:
+                RPM = 0
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
