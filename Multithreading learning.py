@@ -273,7 +273,7 @@ def adcsetup():
     time.sleep(1)
 
 
-def initialise():
+def initialise(c):
     '''GPIO.output(motoRPin1, GPIO.HIGH)
     GPIO.output(motoRPin2, GPIO.LOW)
     p = GPIO.PWM(enablePin, 1000)
@@ -378,7 +378,7 @@ def loop():
 if __name__ == '__main__':
     motorsetup()
     adcsetup()
-    initialise()
+    initialise(0)
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
         loop()
