@@ -338,8 +338,9 @@ def loop():
         c, mode, reading = s.get_reading()
         global stop
         stop = time.time() + 3600
+        time.sleep(1)
         count, mode, reading = s.get_reading()
-        time.sleep(0.1)
+
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
