@@ -350,7 +350,7 @@ def loop():
         mcr.join()
         while not que2.empty():
             RPM = que2.get()
-
+        nonlocal c
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
