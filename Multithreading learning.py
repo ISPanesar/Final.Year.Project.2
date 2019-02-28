@@ -289,17 +289,18 @@ def initialise(c):
     global count, RPM
     count = 0
     rotationtime = 0
+    global starttime
+    starttime = time.time()
 
 
     RPM = 0
     return c
 
 class motor_control:
-    def rpm_measurements(self, count):
+    def rpm_measurements(self, count, starttime):
         if GPIO.event_detected(5):
             global counts
             counts = counts + 1
-            nonlocal starttime
         if (time.time() - starttime) > 5:
             RPM = count / (time.time() - starttime)
             starttime = time.time()
@@ -342,7 +343,7 @@ def loop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(motor_control.rpm_measurements(motor_control,count)), args=(que2, 1))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(motor_control.rpm_measurements(motor_control,count, starttime)), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
@@ -378,8 +379,6 @@ if __name__ == '__main__':
     motorsetup()
     adcsetup()
     initialise(0)
-    global starttime
-    starttime = time.time()
     motor_control.motor_start(motor_control, 100, 1000, 1)
     try:
         loop()
