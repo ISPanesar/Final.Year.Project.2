@@ -299,6 +299,7 @@ class motor_control:
         if GPIO.event_detected(5):
             global counts
             counts = counts + 1
+            nonlocal starttime
         if (time.time() - starttime) > 5:
             RPM = count / (time.time() - starttime)
             starttime = time.time()
