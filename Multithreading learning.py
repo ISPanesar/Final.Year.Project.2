@@ -303,7 +303,7 @@ class motor_control:
             global counts
             counts = counts + 1
         if (time.time() - starttime) > 5:
-            RPM = count / (time.time() - starttime)
+            RPM = counts / (time.time() - starttime)
             starttime = time.time()
             return RPM
         else:
