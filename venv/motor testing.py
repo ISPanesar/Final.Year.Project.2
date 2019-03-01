@@ -1,35 +1,7 @@
-import RPi.GPIO as GPIO
-import time
+import Multithreading_learning
 
+mc = motor_control
+Multithreading_learning.motor_setup()
+Multithreading_learning.mc.motor_start(100, 1000, 2)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(21, GPIO.IN)
-GPIO.setup(20, GPIO.IN)
-GPIO.setup(16, GPIO.OUT)
-p = GPIO.PWM(16, 100)
-p.start(0)
-
-
-
-
-
-if __name__ == '__main__':
-    print('Program is starting')
-    x = 0
-    try:
-        while True:
-            p.ChangeDutyCycle(x)
-            if (GPIO.input(21) == False):
-                if (x < 50):
-                    print('POWERRRRR')
-                    x = x + 1
-                    time.sleep(0.2)
-                if (GPIO.input(20) == False):
-                    if (x > 0):
-                        print('SLOWWWWW')
-                        x = x - 1
-                        time.sleep(0.2)
-
-    except KeyboardInterrupt:
-        GPIO.cleanup
 
