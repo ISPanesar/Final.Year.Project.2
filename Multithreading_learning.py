@@ -341,7 +341,7 @@ def loop():
         #t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
         #t.start()
         #t.join()
-        nonlocal values
+        #nonlocal values
         values = adc.read_adc(0, gain=GAIN)
         count, mode, reading = s.get_reading()
         #while not que.empty():
