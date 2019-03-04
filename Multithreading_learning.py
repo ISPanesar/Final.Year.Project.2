@@ -375,7 +375,7 @@ def loop():
             GPIO.output(motoRPin2, GPIO.HIGH)
             GPIO.output(motoRPin1, GPIO.LOW)
             print('Reversing')
-       ''' elif values > 2046:
+        ''' elif values > 2046:
             GPIO.output(motoRPin1, GPIO.LOW)
             GPIO.output(motoRPin2, GPIO.LOW)
             print('stopping')
