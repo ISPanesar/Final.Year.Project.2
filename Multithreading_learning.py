@@ -364,18 +364,18 @@ def loop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / (2047 - 140)) * 110)
+            length = 110 - (((int(values) - 125) / (1885 - 121)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                      str(round(Force, 5)) + "N",
                                                                      str(round(RPM, 0)), mode, reading, values))
 
         """90 is the limit of the track so the system moves to the end of the track 
         before reversing 1500 is the start of the track """
-        if values < 140:
+        if values < 125:
             GPIO.output(motoRPin2, GPIO.HIGH)
             GPIO.output(motoRPin1, GPIO.LOW)
             print('Reversing')
-        elif values > 2186:
+        elif values > 1885:
             GPIO.output(motoRPin1, GPIO.LOW)
             GPIO.output(motoRPin2, GPIO.LOW)
             print('stopping')
