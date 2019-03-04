@@ -375,7 +375,7 @@ def loop():
             GPIO.output(motoRPin2, GPIO.HIGH)
             GPIO.output(motoRPin1, GPIO.LOW)
             print('Reversing')
-        elif values > 2046:
+       ''' elif values > 2046:
             GPIO.output(motoRPin1, GPIO.LOW)
             GPIO.output(motoRPin2, GPIO.LOW)
             print('stopping')
@@ -386,7 +386,7 @@ def loop():
             load cell and use this to calibrate the raw data, use a set of calipers
             to determine the length of the track and use the program to see the
             raw data limitations for the hardware"""
-
+'''
 if __name__ == '__main__':
     motorsetup()
     adcsetup()
