@@ -364,7 +364,7 @@ def loop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / (2046 - 140)) * 110)
+            length = 110 - (((int(values) - 140) / 2046) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                      str(round(Force, 5)) + "N",
                                                                      str(round(RPM, 0)), mode, reading, values))
@@ -375,7 +375,7 @@ def loop():
             GPIO.output(motoRPin2, GPIO.HIGH)
             GPIO.output(motoRPin1, GPIO.LOW)
             print('Reversing')
-        elif values > 2046:
+        elif values > 2186:
             GPIO.output(motoRPin1, GPIO.LOW)
             GPIO.output(motoRPin2, GPIO.LOW)
             print('stopping')
