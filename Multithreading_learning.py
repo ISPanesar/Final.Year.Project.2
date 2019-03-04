@@ -364,7 +364,7 @@ def loop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / 2046) * 110)
+            length = 110 - (((int(values) - 140) / 2047 - 140) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                      str(round(Force, 5)) + "N",
                                                                      str(round(RPM, 0)), mode, reading, values))
