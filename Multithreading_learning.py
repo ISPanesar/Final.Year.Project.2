@@ -359,8 +359,6 @@ def loop():
             rpm = que2.get()
             if rpm is not None:
                 RPM = rpm
-            else:
-                RPM = 0
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
