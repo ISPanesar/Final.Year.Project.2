@@ -334,6 +334,7 @@ def loop():
     s.set_mode(HX711.CH_A_GAIN_64)
     c, mode, reading = s.get_reading()
     mc.motor_start(100, 1000, 1)
+    RPM = 0
     while True:
         #que = queue.Queue()
         que2 = queue.Queue()
