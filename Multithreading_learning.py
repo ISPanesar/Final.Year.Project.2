@@ -285,17 +285,40 @@ def initialise(c):
 
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-    global counts, RPM, count, values
+    global counts, RPM, count, values, starttime, forceSP, trackrate, operational_mode, syringelength
     counts = 0
     count = 0
     RPM = 0
     values = 1499
     rotationtime = 0
-    global starttime
     starttime = time.time()
-
-
     RPM = 0
+    operational_mode = int(input('Do you want constant force(1) or constant flowrate(2)?'))
+    if operational_mode == 1:
+        print('Constant force selected')
+        forceSP = int(input('please enter the required force in Newtons between XX and XX'))
+        print('the force the controller will attempt to output is ' + str(forceSP) + 'N')
+    elif operational_mode == 2:
+        print('Constant flowrate selected')
+        print('This flowrate is defined via the volume expelled vs distance along the track')
+        selc = int(input('Do you want to calculate trackrate with syringe data(1) or just input the trackrate?(2)'))
+        if selc == 1:
+            syringelength = int(input('Input the syringe length in mm'))
+            radius = int(input('Input the syringe radius in mm'))
+            if syringelength or radius == (not int):
+                print('you must enter integers for these values')
+                initialise(0)
+            area = 3.14195 * radius ** 2
+            vol = area * syringelength
+            print(str(area) + ' square mm, ' + str(vol) + ' cubic mm')
+            tm = int(input('How long do you want the syringe to empty for?'))
+            rate = vol/tm
+            print('the volumetric flowrate is ' + str(rate))
+            trackrate = rate/area
+        elif selc == 2:
+            trackrate = int(input('Input the track rate in mm/s'))
+            syringelength=int(input('Please enter the syringe length to stop the motor'))
+        print('the defined trackrate the controller will try to maintain is ' + str(trackrate) + ' mm/s')
     return c
 
 
@@ -307,7 +330,6 @@ class motor_control:
         if (time.time() - starttime) > 2:
             RPM = counts / (time.time() - starttime)
             starttime = time.time()
-            return RPM
 
 
     def motor_start(self, pwm, freq, direction):
@@ -356,11 +378,8 @@ def loop():
         mcr.start()
         mcr.join()
         while not que2.empty():
-            rpm = que2.get()
-            if RPM is None and (time.time()-starttime) < 2:
-                RPM = 0
-            else:
-                RPM =rpm
+            RPM = que2.get()
+
 
         if count != c:
             c = count
@@ -388,6 +407,99 @@ def loop():
             to determine the length of the track and use the program to see the
             raw data limitations for the hardware"""
 '''
+
+def forceloop():
+    pi = pigpio.pi()
+    if not pi.connected:
+        exit(0)
+    s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
+    s.set_mode(HX711.CH_A_GAIN_64)
+    c, mode, reading = s.get_reading()
+    pwm = 50
+    mc.motor_start(pwm, 1000, 1)
+    RPM = 0
+    while True:
+        # que = queue.Queue()
+        que2 = queue.Queue()
+        # Read the ADC channel values in a list.
+        # t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
+        # t.start()
+        # t.join()
+        # nonlocal values
+        values = adc.read_adc(0, gain=GAIN)
+        count, mode, reading = s.get_reading()
+        # while not que.empty():
+        #    values = que.get()
+        #    count, mode, reading = s.get_reading()
+
+        """ This calculates the force on the load cell, the distance
+        along the track the syringe has moved and outputs the raw data along 
+        with the number of steps"""
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
+        mcr.start()
+        mcr.join()
+        while not que2.empty():
+            RPM = que2.get()
+
+        if count != c:
+            c = count
+            Force = 0.00004 * (reading - 283000)
+            length = 110 - (((int(values) - 140) / (2046 - 140)) * 110)
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                str(round(Force, 5)) + "N",
+                                                                str(round(RPM, 0)), mode, reading, values))
+
+
+        if length >= syringelength:
+            GPIO.output(motoRPin1, GPIO.LOW)
+            GPIO.output(motoRPin2, GPIO.LOW)
+            print('stopping as syringe is empty')
+            GPIO.cleanup()
+            exit()
+        if round(Force,0) - round(forceSP, 0) != 0:
+            if round(Force,0 ) - round(forceSP, 0) < 0:
+                if pwm == 100:
+                    print('the motor cannot turn faster')
+                elif pwm < 100:
+                    pwm = pwm + 1
+                    mc.p.changedutycycle(pwm)
+            else:
+                if pwm == 0:
+                    print('the motor has stalled')
+                    pwm = 100
+                    mc.p.changedutycycle(pwm)
+                    GPIO.output(motoRPin2, GPIO.HIGH)
+                    GPIO.output(motoRPin1, GPIO.LOW)
+                    time.sleep(2)
+                    GPIO.output(motoRPin1, GPIO.HIGH)
+                    GPIO.output(motoRPin2, GPIO.LOW)
+                    pwm = 1
+                    mc.p.changedutycycle(pwm)
+                    print('restarting motor')
+                elif pwm > 0:
+                    pwm = pwm -1
+                    mc.p.changedutycycle(pwm)
+
+
+        """90 is the limit of the track so the system moves to the end of the track 
+        before reversing 1500 is the start of the track """
+        if values < 140:
+            GPIO.output(motoRPin2, GPIO.HIGH)
+            GPIO.output(motoRPin1, GPIO.LOW)
+            print('Reversing')
+        ''' elif values > 2046:
+            GPIO.output(motoRPin1, GPIO.LOW)
+            GPIO.output(motoRPin2, GPIO.LOW)
+            print('stopping')
+            GPIO.cleanup()
+            exit()
+            """Please note that the Force and length of the track needs to be 
+            calibrated to be used with this program apply a known force to the 
+            load cell and use this to calibrate the raw data, use a set of calipers
+            to determine the length of the track and use the program to see the
+            raw data limitations for the hardware"""
+'''
+
 if __name__ == '__main__':
     motorsetup()
     adcsetup()
@@ -396,5 +508,16 @@ if __name__ == '__main__':
         loop()
     except KeyboardInterrupt:
         GPIO.cleanup
+    if operational_mode == 1:
+        try:
+            forceloop()
+        except KeyboardInterrupt:
+            GPIO.cleanup
+    else:
+        try:
+            trackloop()
+        except KeyboardInterrupt:
+            GPIO.cleanup
+
 
 
