@@ -357,7 +357,7 @@ def loop():
         mcr.join()
         while not que2.empty():
             rpm = que2.get()
-            if RPM is None and (time,time()-starttime) < 2:
+            if RPM is None and (time.time()-starttime) < 2:
                 RPM = 0
             else:
                 RPM =rpm
