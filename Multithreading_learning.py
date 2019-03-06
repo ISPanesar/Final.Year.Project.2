@@ -304,7 +304,7 @@ class motor_control:
         if GPIO.event_detected(5):
             global counts
             counts = counts + 1
-        if (time.time() - starttime) > 5:
+        if (time.time() - starttime) > 2:
             RPM = counts / (time.time() - starttime)
             starttime = time.time()
             return RPM
@@ -356,9 +356,12 @@ def loop():
         mcr.start()
         mcr.join()
         while not que2.empty():
-            RPM = que2.get()
-            #if rpm is not None:
-            #    RPM = rpm
+            rpm = que2.get()
+            if RPM is None and (time,time()-starttime) < 2:
+                RPM = 0
+            else:
+                RPM =rpm
+
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
