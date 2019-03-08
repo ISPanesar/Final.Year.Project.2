@@ -13,6 +13,7 @@ import queue
 
 
 
+
 # This is the class for the HX711 sensor module
 
 class sensor:
@@ -481,33 +482,90 @@ def forceloop():
                     mc.p.changedutycycle(pwm)
 
 
-        """90 is the limit of the track so the system moves to the end of the track 
-        before reversing 1500 is the start of the track """
-        if values < 140:
-            GPIO.output(motoRPin2, GPIO.HIGH)
-            GPIO.output(motoRPin1, GPIO.LOW)
-            print('Reversing')
-        ''' elif values > 2046:
+def trackloop():
+    pi = pigpio.pi()
+    if not pi.connected:
+        exit(0)
+    s = HX711.sensor(pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32)
+    s.set_mode(HX711.CH_A_GAIN_64)
+    c, mode, reading = s.get_reading()
+    pwm = 50
+    mc.motor_start(pwm, 1000, 1)
+    RPM = 0
+    while True:
+        # que = queue.Queue()
+        que2 = queue.Queue()
+        # Read the ADC channel values in a list.
+        # t = threading.Thread(target=lambda q, arg1: q.put(adc.read_adc(0, gain=GAIN)), args=(que, 1))
+        # t.start()
+        # t.join()
+        # nonlocal values
+        values = adc.read_adc(0, gain=GAIN)
+        count, mode, reading = s.get_reading()
+        # while not que.empty():
+        #    values = que.get()
+        #    count, mode, reading = s.get_reading()
+
+        """ This calculates the force on the load cell, the distance
+        along the track the syringe has moved and outputs the raw data along 
+        with the number of steps"""
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
+        mcr.start()
+        mcr.join()
+        while not que2.empty():
+            RPM = que2.get()
+
+        if count != c:
+            c = count
+            Force = 0.00004 * (reading - 283000)
+            length = 110 - (((int(values) - 140) / (2046 - 140)) * 110)
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                str(round(Force, 5)) + "N",
+                                                                str(round(RPM, 0)), mode, reading, values))
+        tracktime = time.time()
+
+        if time.time() - tracktime >= 1:
+            track1 = length
+
+        if length >= syringelength:
             GPIO.output(motoRPin1, GPIO.LOW)
             GPIO.output(motoRPin2, GPIO.LOW)
-            print('stopping')
+            print('stopping as syringe is empty')
             GPIO.cleanup()
             exit()
-            """Please note that the Force and length of the track needs to be 
-            calibrated to be used with this program apply a known force to the 
-            load cell and use this to calibrate the raw data, use a set of calipers
-            to determine the length of the track and use the program to see the
-            raw data limitations for the hardware"""
-'''
+        if round(Force,0) - round(forceSP, 0) != 0:
+            if round(Force,0 ) - round(forceSP, 0) < 0:
+                if pwm == 100:
+                    print('the motor cannot turn faster')
+                elif pwm < 100:
+                    pwm = pwm + 1
+                    mc.p.changedutycycle(pwm)
+            else:
+                if pwm == 0:
+                    print('the motor has stalled')
+                    pwm = 100
+                    mc.p.changedutycycle(pwm)
+                    GPIO.output(motoRPin2, GPIO.HIGH)
+                    GPIO.output(motoRPin1, GPIO.LOW)
+                    time.sleep(2)
+                    GPIO.output(motoRPin1, GPIO.HIGH)
+                    GPIO.output(motoRPin2, GPIO.LOW)
+                    pwm = 1
+                    mc.p.changedutycycle(pwm)
+                    print('restarting motor')
+                elif pwm > 0:
+                    pwm = pwm -1
+                    mc.p.changedutycycle(pwm)
+
 
 if __name__ == '__main__':
     motorsetup()
     adcsetup()
     initialise(0)
-    try:
-        loop()
-    except KeyboardInterrupt:
-        GPIO.cleanup
+    #try:
+    #    loop()
+    #except KeyboardInterrupt:
+    #    GPIO.cleanup
     if operational_mode == 1:
         try:
             forceloop()
