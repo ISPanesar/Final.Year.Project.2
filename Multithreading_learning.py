@@ -453,12 +453,12 @@ def forceloop():
                                                                 str(round(RPM, 0)), mode, reading, values))
 
 
-        if length >= syringelength:
-            GPIO.output(motoRPin1, GPIO.LOW)
-            GPIO.output(motoRPin2, GPIO.LOW)
-            print('stopping as syringe is empty')
-            GPIO.cleanup()
-            exit()
+            if length >= syringelength:
+                GPIO.output(motoRPin1, GPIO.LOW)
+                GPIO.output(motoRPin2, GPIO.LOW)
+                print('stopping as syringe is empty')
+                GPIO.cleanup()
+                exit()
         if round(Force,0) - round(forceSP, 0) != 0:
             if round(Force,0 ) - round(forceSP, 0) < 0:
                 if pwm == 100:
