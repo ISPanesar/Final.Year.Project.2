@@ -299,6 +299,8 @@ def initialise(c):
         print('Constant force selected')
         forceSP = int(input('please enter the required force in Newtons between XX and XX'))
         print('the force the controller will attempt to output is ' + str(forceSP) + 'N')
+        syringelength = int(input('Input the syringe length in mm'))
+        print(str(syringelength))
     elif operational_mode == 2:
         print('Constant flowrate selected')
         print('This flowrate is defined via the volume expelled vs distance along the track')
