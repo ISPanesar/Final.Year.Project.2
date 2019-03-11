@@ -464,23 +464,23 @@ def forceloop():
                         print('the motor cannot turn faster')
                     elif pwm < 100:
                         pwm = pwm + 1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                 else:
                     if pwm == 0:
                         print('the motor has stalled')
                         pwm = 100
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                         GPIO.output(motoRPin2, GPIO.HIGH)
                         GPIO.output(motoRPin1, GPIO.LOW)
                         time.sleep(2)
                         GPIO.output(motoRPin1, GPIO.HIGH)
                         GPIO.output(motoRPin2, GPIO.LOW)
                         pwm = 1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                         print('restarting motor')
                     elif pwm > 0:
                         pwm = pwm -1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
 
 
 def trackloop():
@@ -538,23 +538,23 @@ def trackloop():
                         print('the motor cannot turn faster')
                     elif pwm < 100:
                         pwm = pwm + 1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                 else:
                     if pwm == 0:
                         print('the motor has stalled')
                         pwm = 100
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                         GPIO.output(motoRPin2, GPIO.HIGH)
                         GPIO.output(motoRPin1, GPIO.LOW)
                         time.sleep(2)
                         GPIO.output(motoRPin1, GPIO.HIGH)
                         GPIO.output(motoRPin2, GPIO.LOW)
                         pwm = 1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
                         print('restarting motor')
                     elif pwm > 0:
                         pwm = pwm - 1
-                        mc.p.changedutycycle(pwm)
+                        mc.p.ChangeDutyCycle(pwm)
 
 
 
