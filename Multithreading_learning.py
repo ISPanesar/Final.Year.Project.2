@@ -289,7 +289,6 @@ def initialise(c):
     global counts, RPM, count, values, starttime, forceSP, trackrate, operational_mode, syringelength
     counts = 0
     count = 0
-    RPM = 0
     values = 1499
     rotationtime = 0
     starttime = time.time()
@@ -328,7 +327,7 @@ def initialise(c):
 class motor_control:
     def rpm_measurements(self,  starttime):
         if GPIO.event_detected(5):
-            global counts
+            global counts, RPM
             counts = counts + 1
         if (time.time() - starttime) > 2:
             RPM = counts / (time.time() - starttime)
