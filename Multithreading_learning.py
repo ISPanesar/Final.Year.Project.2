@@ -386,7 +386,7 @@ def loop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / (2046-140)) * 110)
+            length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                      str(round(Force, 5)) + "N",
                                                                      str(round(RPM, 0)), mode, reading, values))
@@ -446,7 +446,7 @@ def forceloop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / (2046 - 140)) * 110)
+            length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
@@ -519,7 +519,7 @@ def trackloop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 140) / (2046 - 140)) * 110)
+            length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
