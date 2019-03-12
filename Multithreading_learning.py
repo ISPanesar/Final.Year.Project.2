@@ -9,6 +9,7 @@ import pigpio  # http://abyz.co.uk/rpi/pigpio/python.html
 import HX711
 import threading
 import queue
+import array as arr
 
 
 
@@ -286,7 +287,7 @@ def initialise(c):
 
     # This sets the column headings
     print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
-    global counts, RPM, count, values, starttime, forceSP, trackrate, operational_mode, syringelength
+    global counts, RPM, count, values, starttime, forceSP, trackrate, operational_mode, syringelength, rate
     counts = 0
     count = 0
     values = 1499
@@ -494,6 +495,7 @@ def trackloop():
     pwm = 50
     mc.motor_start(pwm, 1000, 1)
     RPM = 0
+    depressionrate = 0
     while True:
         # que = queue.Queue()
         que2 = queue.Queue()
@@ -516,7 +518,7 @@ def trackloop():
         mcr.join()
         while not que2.empty():
             RPM = que2.get()
-        tracktime = time.time()
+
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
@@ -524,38 +526,40 @@ def trackloop():
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
-            if time.time() - tracktime >= 1:
-                track1 = length
 
-            if length >= syringelength:
-                GPIO.output(motoRPin1, GPIO.LOW)
-                GPIO.output(motoRPin2, GPIO.LOW)
-                print('stopping as syringe is empty')
-                GPIO.cleanup()
-                exit()
-            if round(Force, 0) - round(forceSP, 0) != 0:
-                if round(Force, 0) - round(forceSP, 0) < 0:
+            rate = []
+            tracktime = time.time()
+            tracklst = (length, tracktime)
+            rate.append(tracklst)
+            time.sleep(0.001)
+            if len(rate) == 1000:
+                dsts, times = zip(*rate)
+                depressionrate = (dsts[1000] - dsts[0]) / (times[1000] - times[0])
+                rate = rate.pop()
+            if round(depressionrate, 0) - trackrate !=0:
+                if round(depressionrate, 0) - trackrate < 0:
                     if pwm == 100:
                         print('the motor cannot turn faster')
                     elif pwm < 100:
                         pwm = pwm + 1
                         mc.p.ChangeDutyCycle(pwm)
-                else:
-                    if pwm == 0:
-                        print('the motor has stalled')
-                        pwm = 100
-                        mc.p.ChangeDutyCycle(pwm)
-                        GPIO.output(motoRPin2, GPIO.HIGH)
-                        GPIO.output(motoRPin1, GPIO.LOW)
-                        time.sleep(2)
-                        GPIO.output(motoRPin1, GPIO.HIGH)
-                        GPIO.output(motoRPin2, GPIO.LOW)
-                        pwm = 1
-                        mc.p.ChangeDutyCycle(pwm)
-                        print('restarting motor')
-                    elif pwm > 0:
-                        pwm = pwm - 1
-                        mc.p.ChangeDutyCycle(pwm)
+                    else:
+                        if pwm == 0:
+                            print('the motor has stalled')
+                            pwm = 100
+                            mc.p.ChangeDutyCycle(pwm)
+                            GPIO.output(motoRPin2, GPIO.HIGH)
+                            GPIO.output(motoRPin1, GPIO.LOW)
+                            time.sleep(2)
+                            GPIO.output(motoRPin1, GPIO.HIGH)
+                            GPIO.output(motoRPin2, GPIO.LOW)
+                            pwm = 1
+                            mc.p.ChangeDutyCycle(pwm)
+                            print('restarting motor')
+                        elif pwm > 0:
+                            pwm = pwm - 1
+                            mc.p.ChangeDutyCycle(pwm)
+
 
 
 
