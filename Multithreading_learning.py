@@ -325,13 +325,12 @@ def initialise(c):
 
 
 class motor_control:
-    def rpm_measurements(self,  starttime):
+    def rpm_measurements(self):
         if GPIO.event_detected(5):
             global counts, RPM
             counts = counts + 1
         if (time.time() - starttime) >= 2:
             RPM = counts / (time.time() - starttime)
-            nonlocal starttime
             starttime = time.time()
         return RPM
 
@@ -377,7 +376,7 @@ def loop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements()), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
@@ -438,7 +437,7 @@ def forceloop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements()), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
@@ -511,7 +510,7 @@ def trackloop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements()), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
