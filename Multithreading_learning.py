@@ -430,6 +430,7 @@ def forceloop():
         # t.join()
         # nonlocal values
         values = adc.read_adc(0, gain=GAIN)
+        values2 = adc.read_adc(1, gain=GAIN)
         count, mode, reading = s.get_reading()
         # while not que.empty():
         #    values = que.get()
@@ -449,9 +450,9 @@ def forceloop():
             c = count
             Force = 0.00004 * (reading - 283000)
             length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
-            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+            print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
-                                                                str(round(RPM, 0)), mode, reading, values))
+                                                                str(round(RPM, 0)), mode, reading, values, values2))
 
 
             if length >= syringelength:
