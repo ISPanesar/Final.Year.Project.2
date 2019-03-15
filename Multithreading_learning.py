@@ -294,24 +294,23 @@ def initialise(c):
     rotationtime = 0
     starttime = time.time()
     RPM = 0
-    operational_mode = int(input('Do you want constant force(1) or constant flowrate(2)?'))
+    operational_mode = int(input('Do you want constant force(1) or constant flowrate(2)? '))
     if operational_mode == 1:
         print('Constant force selected')
-        forceSP = int(input('please enter the required force in Newtons between XX and XX'))
+        forceSP = int(input('please enter the required force in Newtons between XX and XX '))
         print('the force the controller will attempt to output is ' + str(forceSP) + 'N')
-        syringelength = int(input('Input the syringe length in mm'))
-        print(str(syringelength))
+        syringelength = int(((int(values) - 92) / (1499 - 92)) * 110)
+        print(str(syringelength) + 'mm')
     elif operational_mode == 2:
         print('Constant flowrate selected')
         print('This flowrate is defined via the volume expelled vs distance along the track')
-        selc = int(input('Do you want to calculate trackrate with syringe data(1) or just input the trackrate?(2)'))
+        selc = int(input('Do you want to calculate volume with syringe data(1) or just input the volumetric flowrate needed?(2) '))
+        values = adc.read_adc(0, gain=GAIN)
+        values2 = adc.read_adc(1, gain=GAIN)
+        syringelength = int(((int(values) - 92) / (1499 - 92)) * 110)
+        diameter = int((-0.0198 * values2 + 40.606))
+        area = 3.14195 * (diameter / 2) ** 2
         if selc == 1:
-            syringelength = int(input('Input the syringe length in mm'))
-            radius = int(input('Input the syringe radius in mm'))
-            if syringelength or radius == (not int):
-                print('you must enter integers for these values')
-                initialise(0)
-            area = 3.14195 * radius ** 2
             vol = area * syringelength
             print(str(area) + ' square mm, ' + str(vol) + ' cubic mm')
             tm = int(input('How long do you want the syringe to empty for?'))
@@ -319,8 +318,8 @@ def initialise(c):
             print('the volumetric flowrate is ' + str(rate))
             trackrate = rate/area
         elif selc == 2:
-            trackrate = int(input('Input the track rate in mm/s'))
-            syringelength=int(input('Please enter the syringe length to stop the motor'))
+            volumetricflowrate = int(input('Please enter the volumetric flowrate desired in cubic mm? '))
+            trackrate = volumetricflowrate/area
         print('the defined trackrate the controller will try to maintain is ' + str(trackrate) + ' mm/s')
     return c
 
@@ -331,7 +330,7 @@ class motor_control:
             global counts, RPM
             counts = counts + 1
         if (time.time() - starttime) >= 2:
-            RPM = counts / (time.time() - starttime)
+            RPM = counts / 2*(time.time() - starttime)
             starttime = time.time()
         return RPM, starttime
 
@@ -430,7 +429,6 @@ def forceloop():
         # t.join()
         # nonlocal values
         values = adc.read_adc(0, gain=GAIN)
-        values2 = adc.read_adc(1, gain=GAIN)
         count, mode, reading = s.get_reading()
         # while not que.empty():
         #    values = que.get()
@@ -449,13 +447,12 @@ def forceloop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
-            print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+            length = (((int(values) - 92) / (1499 - 92)) * 110)
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
-                                                                str(round(RPM, 0)), mode, reading, values, values2))
+                                                                str(round(RPM, 0)), mode, reading, values))
 
-
-            if length >= syringelength:
+            if length <= 0:
                 GPIO.output(motoRPin1, GPIO.LOW)
                 GPIO.output(motoRPin2, GPIO.LOW)
                 print('stopping as syringe is empty')
@@ -523,7 +520,7 @@ def trackloop():
         if count != c:
             c = count
             Force = 0.00004 * (reading - 283000)
-            length = 110 - (((int(values) - 92) / (1499 - 92)) * 110)
+            length = (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
@@ -533,6 +530,12 @@ def trackloop():
             tracklst = (length, tracktime)
             rate.append(tracklst)
             time.sleep(0.001)
+            if length <= 0:
+                GPIO.output(motoRPin1, GPIO.LOW)
+                GPIO.output(motoRPin2, GPIO.LOW)
+                print('stopping as syringe is empty')
+                GPIO.cleanup()
+                exit(0)
             if len(rate) == 1000:
                 dsts, times = zip(*rate)
                 depressionrate = (dsts[1000] - dsts[0]) / (times[1000] - times[0])
