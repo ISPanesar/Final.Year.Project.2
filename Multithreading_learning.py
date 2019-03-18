@@ -515,7 +515,7 @@ def trackloop():
         mcr.start()
         mcr.join()
         while not que2.empty():
-            RRPMmeas = que2.get()
+            RPMmeas = que2.get()
             RPM = RPMmeas[0]
 
         if count != c:
