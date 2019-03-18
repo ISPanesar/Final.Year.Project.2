@@ -541,7 +541,7 @@ def trackloop():
                 exit(0)
             if len(rate) == 1000:
                 dsts, times = zip(*rate)
-                depressionrate = ((((int(dsts[1000]) - 92) / (1499 - 92)) * 110) - ((int(dsts[0]) - 92) / (1499 - 92)) * 110) / (times[1000] - times[0])
+                depressionrate = (((((int(dsts[1000]) - 92) / (1499 - 92)) * 110) - ((int(dsts[0]) - 92) / (1499 - 92)) * 110)) / (times[1000] - times[0])
                 rate = rate.pop()
             if round(depressionrate, 0) - trackrate !=0:
                 if round(depressionrate, 0) - trackrate < 0:
