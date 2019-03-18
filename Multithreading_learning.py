@@ -526,6 +526,8 @@ def trackloop():
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
 
+
+            global rate
             rate = []
             tracktime = time.time()
             tracklst = (length, tracktime)
