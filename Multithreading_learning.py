@@ -478,6 +478,7 @@ def forceloop():
                         pwm = 1
                         mc.p.ChangeDutyCycle(pwm)
                         print('restarting motor')
+                        time.sleep(1)
                     elif pwm > 0:
                         pwm = pwm -1
                         mc.p.ChangeDutyCycle(pwm)
@@ -541,7 +542,7 @@ def trackloop():
                 exit(0)
             if len(rate) == 1000:
                 dsts, times = zip(*rate)
-                depressionrate = (dsts[0] - dsts[1000]) / (times[0] - times[1000])
+                depressionrate = (dsts[0] - dsts[1000]) / (times[1000] - times[0])
                 rate = rate.pop()
             if round(depressionrate, 0) - trackrate !=0:
                 if round(depressionrate, 0) - trackrate < 0:
@@ -563,6 +564,7 @@ def trackloop():
                             pwm = 1
                             mc.p.ChangeDutyCycle(pwm)
                             print('restarting motor')
+                            time.sleep(1)
                         elif pwm > 0:
                             pwm = pwm - 1
                             mc.p.ChangeDutyCycle(pwm)
