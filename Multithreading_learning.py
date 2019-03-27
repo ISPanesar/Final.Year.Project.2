@@ -442,7 +442,7 @@ def forceloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM = RPMmeas[0]
+            RPM, times = zip(*RPMmeas)
 
         if count != c:
             c = count
@@ -495,6 +495,8 @@ def trackloop():
     mc.motor_start(pwm, 1000, 1)
     RPM = 0
     depressionrate = 0
+    global rate
+    rate = []
     while True:
         # que = queue.Queue()
         que2 = queue.Queue()
@@ -517,7 +519,7 @@ def trackloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM = RPMmeas[0]
+            RPM, times = zip(*RPMmeas)
 
         if count != c:
             c = count
@@ -528,8 +530,7 @@ def trackloop():
                                                                 str(round(RPM, 0)), mode, reading, values))
 
 
-            global rate
-            rate = []
+
             tracktime = time.time()
             tracklst = (length, tracktime)
             rate.append(tracklst)
@@ -541,8 +542,8 @@ def trackloop():
                 GPIO.cleanup()
                 exit(0)
             if len(rate) == 1000:
-                dsts, times = zip(*rate)
-                depressionrate = (dsts[0] - dsts[1000]) / (times[1000] - times[0])
+                dsts, timez = zip(*rate)
+                depressionrate = (dsts[0] - dsts[1000]) / (timez[1000] - timez[0])
                 rate = rate.pop()
             if round(depressionrate, 0) - trackrate !=0:
                 if round(depressionrate, 0) - trackrate < 0:
