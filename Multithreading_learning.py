@@ -450,7 +450,7 @@ def forceloop():
             length = (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
-                                                                str(round(RPM, 0)), mode, reading, values))
+                                                                str(round(RPM, 0)), mode, reading, values), file=open("results.txt", "a"))
 
             if length <= 0:
                 GPIO.output(motoRPin1, GPIO.LOW)
@@ -527,7 +527,7 @@ def trackloop():
             length = (((int(values) - 92) / (1499 - 92)) * 110)
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
-                                                                str(round(RPM, 0)), mode, reading, values))
+                                                                str(round(RPM, 0)), mode, reading, values), file=open("results1.txt", "a"))
 
 
 
