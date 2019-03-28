@@ -443,7 +443,7 @@ def forceloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM= RPMmeas(RPMtest)
+            RPM, starttime = RPMmeas
 
         if count != c:
             c = count
