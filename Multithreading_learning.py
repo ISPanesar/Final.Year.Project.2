@@ -286,7 +286,7 @@ def initialise(c):
     # This is used to pull data from the load cell
 
     # This sets the column headings
-    print("| Step | Position | Force | OE count | RPM | Mode | Raw HX711 | Raw Pot |")
+    print("| Step | Position | Force | RPM | Mode | Raw HX711 | Raw Pot |")
     global counts, RPM, count, values, starttime, forceSP, trackrate, operational_mode, syringelength, rate
     counts = 0
     count = 0
@@ -329,7 +329,7 @@ class motor_control:
         if GPIO.event_detected(5):
             global counts, RPMtest
             counts = counts + 1
-        if (time.time() - starttime) >= 2:
+        if (time.time() - starttime) >= 0.01:
             RPMtest = counts / 2*(time.time() - starttime)
             starttime = time.time()
         return RPMtest, starttime
@@ -451,7 +451,9 @@ def forceloop():
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values), file=open("results.txt", "a"))
-
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                str(round(Force, 5)) + "N",
+                                                                str(round(RPM, 0)), mode, reading, values))
             if length <= 0:
                 GPIO.output(motoRPin1, GPIO.LOW)
                 GPIO.output(motoRPin2, GPIO.LOW)
@@ -528,7 +530,9 @@ def trackloop():
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values), file=open("results1.txt", "a"))
-
+            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+                                                                str(round(Force, 5)) + "N",
+                                                                str(round(RPM, 0)), mode, reading, values))
 
 
             tracktime = time.time()
