@@ -444,7 +444,7 @@ def forceloop():
         while not que2.empty():
             RPMmeas = que2.get()
             RPM = RPMmeas[0]
-            starttime = RPMmeas[1]
+
 
         if count != c:
             c = count
