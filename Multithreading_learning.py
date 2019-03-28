@@ -333,7 +333,7 @@ class motor_control:
             RPMtest = counts / (2*(time.time() - starttime))
             starttime = time.time()
             counts = 0
-        return [RPMtest, starttime]
+        return RPMtest, starttime
 
     def motor_start(self, pwm, freq, direction):
         self.p = GPIO.PWM(enablePin, freq)
