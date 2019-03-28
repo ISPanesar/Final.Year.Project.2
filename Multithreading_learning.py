@@ -330,8 +330,9 @@ class motor_control:
             global counts, RPMtest
             counts = counts + 1
         if (time.time() - starttime) >= 0.01:
-            RPMtest = counts / 2*(time.time() - starttime)
+            RPMtest = counts / (2*(time.time() - starttime))
             starttime = time.time()
+            counts = 0
         return RPMtest, starttime
 
     def motor_start(self, pwm, freq, direction):
@@ -442,7 +443,7 @@ def forceloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM= RPMmeas[0]
+            RPM= RPMmeas(RPMtest)
 
         if count != c:
             c = count
