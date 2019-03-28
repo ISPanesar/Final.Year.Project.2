@@ -1,302 +1,306 @@
-import RPi.GPIO as GPIO
+#!/usr/bin/env python
+
+# HX711.py
+# 2018-03-05
+# Public Domain
+
+CH_A_GAIN_64  = 0 # Channel A gain 64
+CH_A_GAIN_128 = 1 # Channel A gain 128
+CH_B_GAIN_32  = 2 # Channel B gain 32
+
+DATA_CLKS = 24
+X_128_CLK = 25
+X_32_CLK  = 26
+X_64_CLK  = 27
+
+PULSE_LEN = 15
+
+# If the data line goes low after being high for at least
+# this long it indicates that a new reading is available.
+
+TIMEOUT = ((X_64_CLK + 3) * 2 * PULSE_LEN)
+
+# The number of readings to skip after a mode change.
+
+SETTLE_READINGS = 5
+
 import time
-import numpy  # sudo apt-get python-numpy
 
+import pigpio # http://abyz.co.uk/rpi/pigpio/python.html
+         
+class sensor:
 
-class HX711:
+   """
+   A class to read the HX711 24-bit ADC.
+   """
+
+   def __init__(self, pi, DATA, CLOCK, mode=CH_A_GAIN_128, callback=None):
+      """
+      Instantiate with the Pi, the data GPIO, and the clock GPIO.
+
+      Optionally the channel and gain may be specified with the
+      mode parameter as follows.
+
+      CH_A_GAIN_64  - Channel A gain 64
+      CH_A_GAIN_128 - Channel A gain 128
+      CH_B_GAIN_32  - Channel B gain 32
+
+      Optionally a callback to be called for each new reading may be
+      specified.  The callback receives three parameters, the count,
+      the mode, and the reading.  The count is incremented for each
+      new reading.
+      """
+      self.pi = pi
+      self.DATA = DATA
+      self.CLOCK = CLOCK
+      self.callback = callback
+
+      self._paused = True
+      self._data_level = 0
+      self._clocks = 0
+
+      self._mode = CH_A_GAIN_128
+      self._value = 0
+
+      self._rmode = CH_A_GAIN_128
+      self._rval = 0
+      self._count = 0
+
+      self._sent = 0
+      self._data_tick = pi.get_current_tick()
+      self._previous_edge_long = False
+      self._in_wave = False
+
+      self._skip_readings = SETTLE_READINGS
+
+      pi.write(CLOCK, 1) # Reset the sensor.
+
+      pi.set_mode(DATA, pigpio.INPUT)
+
+      pi.wave_add_generic(
+         [pigpio.pulse(1<<CLOCK, 0, PULSE_LEN),
+          pigpio.pulse(0, 1<<CLOCK, PULSE_LEN)])
+
+      self._wid = pi.wave_create()
+
+      self._cb1 = pi.callback(DATA, pigpio.EITHER_EDGE, self._callback)
+      self._cb2 = pi.callback(CLOCK, pigpio.FALLING_EDGE, self._callback)
 
-    def __init__(self, dout, pd_sck, gain=128):
-        self.PD_SCK = pd_sck
-        self.DOUT = dout
+      self.set_mode(mode)
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.PD_SCK, GPIO.OUT)
-        GPIO.setup(self.DOUT, GPIO.IN)
+   def get_reading(self):
+      """
+      Returns the current count, mode, and reading.
 
-        self.GAIN = 0
+      The count is incremented for each new reading.
+      """
+      return self._count, self._rmode, self._rval
 
-        # The value returned by the hx711 that corresponds to your reference
-        # unit AFTER dividing by the SCALE.
-        self.REFERENCE_UNIT = 1
-        self.REFERENCE_UNIT_B = 1
+   def set_callback(self, callback):
+      """
+      Sets the callback to be called for every new reading.
+      The callback receives three parameters, the count,
+      the mode, and the reading.  The count is incremented
+      for each new reading.
 
-        self.OFFSET = 1
-        self.OFFSET_B = 1
-        self.lastVal = int(0)
+      The callback can be cancelled by passing None.
+      """
+      self.callback = callback
 
-        self.isNegative = False
-        self.MSBindex24Bit = 2
-        self.MSBindex32Bit = 3
+   def set_mode(self, mode):
+      """
+      Sets the mode.
 
-        self.LSByte = [0, 3, 1]
-        self.MSByte = [2, -1, -1]
+      CH_A_GAIN_64  - Channel A gain 64
+      CH_A_GAIN_128 - Channel A gain 128
+      CH_B_GAIN_32  - Channel B gain 32
+      """
+      self._mode = mode
 
-        self.MSBit = [0, 8, 1]
-        self.LSBit = [7, -1, -1]
+      if mode == CH_A_GAIN_128:
+         self._pulses = X_128_CLK
+      elif mode == CH_B_GAIN_32:
+         self._pulses = X_32_CLK
+      elif mode == CH_A_GAIN_64:
+         self._pulses = X_64_CLK
+      else:
+         raise ValueError
 
-        self.byte_format = 'MSB'
-        self.bit_format = 'MSB'
+      self.pause()
+      self.start()
 
-        self.byte_range_values = self.LSByte
-        self.bit_range_values = self.MSBit
+   def pause(self):
+      """
+      Pauses readings.
+      """
+      self._skip_readings = SETTLE_READINGS
+      self._paused = True
+      self.pi.write(self.CLOCK, 1)
+      time.sleep(0.002)
+      self._clocks = DATA_CLKS + 1
 
-        self.set_gain(gain)
+   def start(self):
+      """
+      Starts readings.
+      """
+      self._wave_sent = False
+      self.pi.write(self.CLOCK, 0)
+      self._clocks = DATA_CLKS + 1
+      self._value = 0
+      self._paused = False
+      self._skip_readings = SETTLE_READINGS
 
-        time.sleep(1)
+   def cancel(self):
+      """
+      Cancels the sensor and release resources.
+      """
+      self.pause()
 
+      if self._cb1 is not None:
+         self._cb1.cancel()
+         self._cb1 = None
 
-    def is_ready(self):
-        return GPIO.input(self.DOUT) == 0
+      if self._cb2 is not None:
+         self._cb2.cancel()
+         self._cb2 = None
 
+      if self._wid is not None:
+         self.pi.wave_delete(self._wid)
+         self._wid = None
 
-    def set_gain(self, gain):
-        if gain is 128:
-            self.GAIN = 1
-        elif gain is 64:
-            self.GAIN = 3
-        elif gain is 32:
-            self.GAIN = 2
+   def _callback(self, gpio, level, tick):
 
-        GPIO.output(self.PD_SCK, False)
-        self.read()
-        time.sleep(0.4)
+      if gpio == self.CLOCK:
 
+         if level == 0:
 
-    def get_gain(self):
-        if self.GAIN == 1:
-            return 128
-        elif self.GAIN == 3:
-            return 64
-        elif self.GAIN == 2:
-            return 32
+            self._clocks += 1
 
+            if self._clocks <= DATA_CLKS:
 
-    def read(self):
-        while not self.is_ready():
-            # print("WAITING")
-            pass
+               self._value = (self._value << 1) + self._data_level
 
-        dataBits = numpy.zeros((4, 8), dtype=bool)
-        dataBytes = [0x0] * 4
+               if self._clocks == DATA_CLKS:
 
-        for j in range(self.byte_range_values[0], self.byte_range_values[1], self.byte_range_values[2]):
-            for i in range(self.bit_range_values[0], self.bit_range_values[1], self.bit_range_values[2]):
-                GPIO.output(self.PD_SCK, True)
-                dataBits[j][i] = GPIO.input(self.DOUT)
-                GPIO.output(self.PD_SCK, False)
-            dataBytes[j] = numpy.packbits(dataBits[j].astype(int))[0]
+                  self._in_wave = False
 
-        # set channel and gain factor for next reading
-        for i in range(self.GAIN):
-            GPIO.output(self.PD_SCK, True)
-            GPIO.output(self.PD_SCK, False)
+                  if self._value & 0x800000: # unsigned to signed
+                     self._value |= ~0xffffff
 
-        self.MSBindex24Bit = 2
-        self.MSBindex32Bit = 3
-        self.isNegative = False
+                  if not self._paused:
 
-        if self.byte_format == 'LSB':
-            self.MSBindex24Bit = 1
-            self.MSBindex32Bit = 0
+                     if self._skip_readings <= 0:
 
-        if dataBytes[self.MSBindex24Bit] & 0x80:
-            self.isNegative = True
+                        self._count = self._sent
+                        self._rmode = self._mode
+                        self._rval = self._value
 
-        dataBytes[self.MSBindex32Bit] = numpy.packbits(dataBits[self.MSBindex32Bit].astype(int))[0]
+                        if self.callback is not None:
+                           self.callback(self._count, self._rmode, self._rval)
 
-        return dataBytes
+                     else:
+                        self._skip_readings -= 1
 
+      else:
 
-    def get_binary_string(self):
-        binary_format = "{0:b}"
-        np_arr8 = self.read_np_arr8()
-        binary_string = ""
-        for i in range(4):
-            # binary_segment = binary_format.format(np_arr8[i])
-            binary_segment = format(np_arr8[i], '#010b')
-            binary_string += binary_segment + " "
-        return binary_string
+         self._data_level = level
 
+         if not self._paused:
 
-    def get_np_arr8_string(self):
-        np_arr8 = self.read_np_arr8()
-        np_arr8_string = "["
-        comma = ", "
-        for i in range(4):
-            if i is 3:
-                comma = ""
-            np_arr8_string += str(np_arr8[i]) + comma
-        np_arr8_string += "]"
+            if self._data_tick is not None:
 
-        return np_arr8_string
+               current_edge_long = pigpio.tickDiff(
+                  self._data_tick, tick) > TIMEOUT
 
+            if current_edge_long and not self._previous_edge_long:
 
-    def read_np_arr8(self):
-        dataBytes = self.read()
-        np_arr8 = numpy.uint8(dataBytes)
+               if not self._in_wave:
 
-        return np_arr8
+                  self._in_wave = True
 
+                  self.pi.wave_chain(
+                     [255, 0, self._wid, 255, 1, self._pulses, 0])
 
-    def read_long(self):
-        np_arr8 = self.read_np_arr8()
+                  self._clocks = 0
+                  self._value = 0
+                  self._sent += 1
 
-        if self.isNegative:
-            np_arr8[self.MSBindex24Bit] ^= 0x80
+         self._data_tick = tick
+         self._previous_edge_long = current_edge_long
 
-        np_arr32 = np_arr8.view('uint32')
-        self.lastVal = int(np_arr32)
+if __name__ == "__main__":
 
-        if self.isNegative:
-            self.lastVal = int(self.lastVal) * int(-1)
+   import time
+   import pigpio
+   import HX711
 
-        return self.lastVal
+   def cbf(count, mode, reading):
+      print(count, mode, reading)
 
+   pi = pigpio.pi()
+   if not pi.connected:
+      exit(0)
 
-    def read_average(self, times=3):
-        values = int(0)
-        for i in range(times):
-            values += self.read_long()
+   s = HX711.sensor(
+      pi, DATA=20, CLOCK=21, mode=HX711.CH_B_GAIN_32, callback=cbf)
 
-        return values / times
+   try:
+      print("start with CH_B_GAIN_32 and callback")
 
+      time.sleep(2)
 
-    # A median-based read method, might help when getting random value spikes
-    # for unknown or CPU-related reasons
-    def read_median(self, times=3):
-        values = list()
-        for i in range(times):
-            values.append(self.read_long())
+      s.set_mode(HX711.CH_A_GAIN_64)
 
-        return numpy.median(values)
+      print("Change mode to CH_A_GAIN_64")
 
+      time.sleep(2)
 
-    # Compatibility function, uses channel A version
-    def get_value(self, times=3):
-        return self.get_value_A(times)
+      s.set_mode(HX711.CH_A_GAIN_128)
 
+      print("Change mode to CH_A_GAIN_128")
 
-    def get_value_A(self, times=3):
-        return self.read_median(times) - self.OFFSET
+      time.sleep(2)
 
+      s.pause()
 
-    def get_value_B(self, times=3):
-        # for channel B, we need to set_gain(32)
-        g = self.get_gain()
-        self.set_gain(32)
-        value = self.read_median(times) - self.OFFSET_B
-        self.set_gain(g)
-        return value
+      print("Pause")
 
+      time.sleep(2)
 
-    # Compatibility function, uses channel A version
-    def get_weight(self, times=3):
-        return self.get_weight_A(times)
+      s.start()
 
+      print("Start")
 
-    def get_weight_A(self, times=3):
-        value = self.get_value_A(times)
-        value = value / self.REFERENCE_UNIT
-        return value
+      time.sleep(2)
 
+      s.set_callback(None)
 
-    def get_weight_B(self, times=3):
-        value = self.get_value_B(times)
-        value = value / self.REFERENCE_UNIT_B
-        return value
+      s.set_mode(HX711.CH_A_GAIN_128)
 
+      print("Change mode to CH_A_GAIN_128")
 
-    # Sets tare for channel A for compatibility purposes
-    def tare(self, times=15):
-        self.tare_A(times)
+      print("Cancel callback and read manually")
 
+      c, mode, reading = s.get_reading()
 
-    def tare_A(self, times=15):
-        # Backup REFERENCE_UNIT value
-        reference_unit = self.REFERENCE_UNIT
-        self.set_reference_unit_A(1)
+      stop = time.time() + 3600
 
-        value = self.read_median(times)
-        self.set_offset_A(value)
+      while time.time() < stop:
 
-        self.set_reference_unit_A(reference_unit)
-        return value
+         count, mode, reading = s.get_reading()
 
+         if count != c:
+            c = count
+            print("{} {} {}".format(count, mode, reading))
 
-    def tare_B(self, times=15):
-        # Backup REFERENCE_UNIT value
-        reference_unit = self.REFERENCE_UNIT_B
-        self.set_reference_unit_B(1)
+         time.sleep(0.05)
 
-        # for channel B, we need to set_gain(32)
-        g = self.get_gain()
-        self.set_gain(32)
+   except KeyboardInterrupt:
+      pass
 
-        value = self.read_median(times)
-        self.set_offset_B(value)
+   s.pause()
 
-        self.set_gain(g)
-        self.set_reference_unit_B(reference_unit)
-        return value
+   s.cancel()
 
+   pi.stop()
 
-    def set_reading_format(self, byte_format="LSB", bit_format="MSB"):
-
-        self.byte_format = byte_format
-        self.bit_format = bit_format
-
-        if byte_format == "LSB":
-            self.byte_range_values = self.LSByte
-        elif byte_format == "MSB":
-            self.byte_range_values = self.MSByte
-
-        if bit_format == "LSB":
-            self.bit_range_values = self.LSBit
-        elif bit_format == "MSB":
-            self.bit_range_values = self.MSBit
-
-
-    # sets offset for channel A for compatibility reasons
-    def set_offset(self, offset):
-        self.set_offset_A(offset)
-
-
-    def set_offset_A(self, offset):
-        self.OFFSET = offset
-
-
-    def set_offset_B(self, offset):
-        self.OFFSET_B = offset
-
-
-    # sets reference unit for channel A for compatibility reasons
-    def set_reference_unit(self, reference_unit):
-        self.set_reference_unit_A(reference_unit)
-
-
-    def set_reference_unit_A(self, reference_unit):
-        self.REFERENCE_UNIT = reference_unit
-
-
-    def set_reference_unit_B(self, reference_unit):
-        self.REFERENCE_UNIT_B = reference_unit
-
-
-    # HX711 datasheet states that setting the PDA_CLOCK pin on high for >60 microseconds would power off the chip.
-    # I used 100 microseconds, just in case.
-    # I've found it is good practice to reset the hx711 if it wasn't used for
-    # more than a few seconds.
-    def power_down(self):
-        GPIO.output(self.PD_SCK, False)
-        GPIO.output(self.PD_SCK, True)
-        time.sleep(0.0001)
-
-
-    def power_up(self):
-        GPIO.output(self.PD_SCK, False)
-        time.sleep(0.4)
-
-
-    def reset(self):
-        self.power_down()
-        self.power_up()

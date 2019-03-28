@@ -333,7 +333,7 @@ class motor_control:
             RPMtest = counts / (2*(time.time() - starttime))
             starttime = time.time()
             counts = 0
-        return RPMtest, starttime
+        return [RPMtest, starttime]
 
     def motor_start(self, pwm, freq, direction):
         self.p = GPIO.PWM(enablePin, freq)
@@ -438,12 +438,13 @@ def forceloop():
         """ This calculates the force on the load cell, the distance
         along the track the syringe has moved and outputs the raw data along 
         with the number of steps"""
-        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 2))
+        mcr = threading.Thread(target=lambda q, arg1: q.put(mc.rpm_measurements(starttime)), args=(que2, 1))
         mcr.start()
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM, starttime = RPMmeas
+            RPM = RPMmeas[0]
+            starttime = RPMmeas[1]
 
         if count != c:
             c = count
