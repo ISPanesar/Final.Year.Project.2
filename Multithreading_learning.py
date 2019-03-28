@@ -442,7 +442,7 @@ def forceloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM, times = zip(*RPMmeas)
+            RPM= RPMmeas[0]
 
         if count != c:
             c = count
@@ -519,7 +519,7 @@ def trackloop():
         mcr.join()
         while not que2.empty():
             RPMmeas = que2.get()
-            RPM, times = zip(*RPMmeas)
+            RPM = RPMmeas[0]
 
         if count != c:
             c = count
