@@ -450,9 +450,9 @@ def forceloop():
             c = count
             Force = 0.00004 * (reading - 283000)
             length = (((int(values) - 92) / (1499 - 92)) * 110)
-            print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
+            print("| {} | {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
-                                                                str(round(RPM, 0)), mode, reading, values), file=open("results.txt", "a"))
+                                                                str(round(RPM, 0)), mode, reading, values, time.time()), file=open("results.txt", "a"))
             print("| {} | {} | {} | {} | {} | {} | {} |".format(count, str(round(length, 2)) + "mm",
                                                                 str(round(Force, 5)) + "N",
                                                                 str(round(RPM, 0)), mode, reading, values))
