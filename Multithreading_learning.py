@@ -327,13 +327,13 @@ def initialise(c):
 class motor_control:
     def rpm_measurements(self,  starttime):
         if GPIO.event_detected(5):
-            global counts, RPMtest
+            global counts, RPM
             counts = counts + 1
         if (time.time() - starttime) >= 0.01:
-            RPMtest = counts / (2*(time.time() - starttime))
-            starttime = time.time()
+            RPM = counts / (2*(time.time() - starttime))
+            starttime1 = time.time()
             counts = 0
-        return RPMtest, starttime
+        return RPM, starttime1
 
     def motor_start(self, pwm, freq, direction):
         self.p = GPIO.PWM(enablePin, freq)
@@ -444,7 +444,7 @@ def forceloop():
         while not que2.empty():
             RPMmeas = que2.get()
             RPM = RPMmeas[0]
-
+            starttime = RPMmeas[0]
 
         if count != c:
             c = count
